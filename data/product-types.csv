@@ -1,0 +1,27 @@
+product_type,industry,recommended_pattern,recommended_style,palette_mood,typography_mood,key_sections,anti_patterns,notes
+saas-landing,saas,hero-centric,minimal,trustworthy-cool,modern;clean,hero;social-proof;features;pricing;faq;cta,wall-of-text hero;no pricing;vague value prop,Lead with the outcome not the feature list
+saas-dashboard,saas,app-shell,flat-2.0,trustworthy-cool,clean;efficient,nav-sidebar;data-cards;tables;detail-views,decorative-clutter;low-contrast-data,Density and clarity beat decoration in tools
+fintech-consumer,fintech,hero-centric,corporate-clean,confident-navy,credible;modern,hero;trust-badges;how-it-works;security;cta,hype-without-trust;hidden-fees,Trust and security signals are conversion-critical
+developer-tool,tech,content-first,dark-tech,technical,technical;sharp,hero;code-sample;docs-link;features;install,marketing-fluff;no-code-example,Show real code early; developers skim for proof
+ecommerce-store,ecommerce,catalog-grid,soft-ui,energetic-coral,clean;friendly,hero;categories;product-grid;reviews;cart,too-many-fields-checkout;no-reviews,Reduce checkout friction; surface social proof
+product-detail-page,ecommerce,media-led,minimal,premium-plum,clean;modern,gallery;price;variants;reviews;cross-sell,tiny-images;buried-add-to-cart,Big imagery and an obvious add-to-cart win
+luxury-brand,luxury,editorial,luxury-serif,gold-on-charcoal,elegant;timeless,hero;story;collection;craftsmanship;contact,clutter;discount-language,Whitespace and restraint communicate premium
+local-service,home-services,hero-centric,corporate-clean,grounded-slate,credible;friendly,hero;services;service-area;reviews;quote-cta,no-phone-number;no-service-area,Phone and service area must be instantly findable
+restaurant,food-bev,media-led,organic-natural,appetite-red,warm;appetite,hero;menu;photos;hours-location;reservation,pdf-only-menu;no-hours,Real food photography and an HTML menu are essential
+healthcare-practice,healthcare,hero-centric,corporate-clean,calm-teal,credible;calm,hero;services;providers;insurance;book-cta,jargon;no-booking-path,Calm trustworthy tone; make booking obvious
+wellness-spa,wellness,media-led,soft-ui,soft-sage,calm;gentle,hero;services;pricing;practitioners;book,aggressive-sales;clinical-cold,Soft palette and imagery; gentle conversion
+real-estate,realestate,catalog-grid,minimal,grounded-slate,credible;modern,hero;listings;search;agent-bio;contact,slow-image-load;no-search,Fast image-rich listings with strong search
+agency-portfolio,creative,editorial,swiss-grid,bold-magenta,precise;bold,hero;work-grid;case-studies;services;contact,generic-stock;no-case-studies,Case studies with outcomes beat a logo wall
+personal-brand,creative,content-first,editorial,editorial-ink,expressive;literary,hero;about;work;writing;contact,no-pov;buried-contact,A clear point of view is the differentiator
+nonprofit,nonprofit,hero-centric,organic-natural,hopeful-green,warm;hopeful,hero;mission;impact-stats;stories;donate-cta,vague-impact;hidden-donate,Make impact concrete and donating frictionless
+education-course,education,content-first,soft-ui,friendly-azure,friendly;clear,hero;curriculum;outcomes;instructor;enroll,wall-of-text;no-outcomes,Lead with outcomes and a clear enroll path
+event-conference,events,hero-centric,gradient-vibrant,bold-magenta,energetic;bold,hero;speakers;agenda;tickets;venue,no-date-visible;buried-tickets,Date location and tickets must be unmissable
+mobile-app-landing,saas,hero-centric,gradient-vibrant,modern-violet,modern;energetic,hero;screenshots;features;ratings;store-badges,no-screenshots;no-store-links,Show the app and the store badges immediately
+b2b-enterprise,b2b,content-first,corporate-clean,confident-navy,credible;professional,hero;logos;solutions;case-studies;demo-cta,consumer-tone;no-proof,Proof and a demo path matter more than flash
+beauty-cosmetics,beauty,media-led,luxury-serif,blush-rose,elegant;refined,hero;products;shades;reviews;shop,clinical-cold;tiny-product-images,Aspirational imagery with easy shopping
+fitness-gym,fitness,hero-centric,neo-brutalist,high-energy-lime,energetic;bold,hero;programs;trainers;pricing;trial-cta,passive-tone;no-trial,High energy; offer a low-friction trial
+travel-tourism,travel,media-led,organic-natural,horizon-teal,warm;immersive,hero;destinations;packages;reviews;book,slow-galleries;no-pricing,Immersive imagery; keep performance in check
+automotive,automotive,media-led,dark-tech,performance-red,bold;sharp,hero;models;specs;gallery;inquiry,spec-overload;no-inquiry,Performance imagery; clear inquiry path
+kids-family,kids,hero-centric,claymorphism,playful-tangerine,playful;fun,hero;activities;safety;pricing;signup,childish-but-unsafe-feeling;no-trust,Playful yet reassuring to parents
+blog-publisher,media,content-first,editorial,editorial-ink,literary;readable,featured;article-grid;categories;newsletter,cluttered-ads;poor-readability,Reading experience and newsletter capture lead
+portfolio-photographer,creative,media-led,minimal,editorial-ink,refined;expressive,hero;galleries;about;services;contact,heavy-unoptimized-images;no-contact,Let the work dominate; optimize the images

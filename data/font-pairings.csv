@@ -1,0 +1,23 @@
+name,heading_font,body_font,mood,best_for,heading_weight,body_weight,google_fonts,notes
+modern-neutral,Inter,Inter,clean;versatile,saas;dashboards;b2b,600,400,yes,One-family pairing; tight and reliable for product UIs
+editorial-classic,Playfair Display,Source Sans 3,sophisticated;literary,publishers;blogs;agencies,700,400,yes,High-contrast serif headline over humanist sans body
+trusted-business,Poppins,Roboto,credible;modern,corporate;finance;legal,600,400,yes,Geometric display over neutral workhorse body
+warm-humanist,Fraunces,Nunito Sans,warm;approachable,wellness;food;dtc,600,400,yes,Soft serif character with friendly rounded body
+tech-precise,Space Grotesk,IBM Plex Sans,technical;sharp,developer-tools;ai;crypto,600,400,yes,Grotesk display with a technical sans body
+luxury-refined,Cormorant Garamond,Jost,elegant;premium,luxury;real-estate;hospitality,600,300,yes,Light high-contrast serif over airy geometric sans
+bold-startup,Sora,Inter,confident;energetic,startups;landing-pages,700,400,yes,Strong geometric headline; neutral body for readability
+friendly-rounded,Quicksand,Karla,friendly;soft,kids;education;consumer,600,400,yes,Rounded display signals approachability
+swiss-objective,Archivo,Archivo,objective;precise,agencies;portfolios;b2b,700,400,yes,Single grotesque family; let the grid do the work
+magazine-impact,Anton,Lora,expressive;bold,fashion;music;events,400,400,yes,Condensed poster headline over readable serif body
+clean-geometric,Manrope,Manrope,modern;efficient,saas;mobile-apps,700,400,yes,Geometric sans single-family; excellent at small sizes
+serif-authority,Libre Baskerville,Source Sans 3,authoritative;classic,legal;finance;institutions,700,400,yes,Traditional serif conveys stability and trust
+playful-display,Baloo 2,Nunito,playful;fun,kids;games;food-bev,600,400,yes,Chunky rounded display; keep body calm to balance
+minimal-mono,Space Mono,Inter,technical;quirky,developer-tools;portfolios,700,400,yes,Monospace accent headline for a code-forward feel
+elegant-contrast,Marcellus,Mulish,refined;timeless,beauty;jewelry;hospitality,400,400,yes,Roman-capital elegance over a quiet neutral body
+modern-serif-duo,Newsreader,Inter,editorial;modern,blogs;media;thought-leadership,500,400,yes,Contemporary reading serif paired with neutral UI sans
+energetic-sans,Outfit,DM Sans,energetic;optimistic,startups;events;campaigns,700,400,yes,Bright geometric display with a smooth body
+grounded-natural,Bitter,Mulish,grounded;authentic,eco;food;sustainability,700,400,yes,Slab serif warmth over a clean readable sans
+corporate-duo,Work Sans,Work Sans,neutral;professional,b2b;enterprise;services,600,400,yes,Safe single-family for conservative industries
+display-luxe,Italiana,Jost,exclusive;fashion,luxury-fashion;beauty,400,300,yes,Delicate display for high-end fashion; use lots of space
+approachable-saas,Plus Jakarta Sans,Plus Jakarta Sans,modern;friendly,saas;fintech-consumer,700,400,yes,Friendly-but-credible single family; strong default for B2C SaaS
+high-readability,Source Serif 4,Source Sans 3,readable;trustworthy,healthcare;education;docs,600,400,yes,Optimized for long-form reading and accessibility

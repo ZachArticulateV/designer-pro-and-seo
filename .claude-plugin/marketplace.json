@@ -1,0 +1,37 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "designer-pro-and-seo",
+  "description": "Web design, SEO, and build-workflow skills for Claude Code. This repository is its own single-plugin marketplace.",
+  "owner": {
+    "name": "Zachary W.",
+    "url": "https://github.com/ZachArticulateV"
+  },
+  "plugins": [
+    {
+      "name": "designer-pro-and-seo",
+      "source": "./",
+      "description": "Web design + SEO + build-workflow skills: design-system generation + on-brand page rendering, design tokens, build briefs, pre-delivery QA, portable-HTML porting for any CMS, and a full SEO suite (technical, schema, sitemap, content, GEO, hreflang, drift, local, e-commerce). 45 stable skills, tool-aware (use a dedicated MCP/CLI when present, else built-in web/browser), mostly free-tier. Original, clean-room content.",
+      "version": "0.4.1",
+      "author": {
+        "name": "Zachary W.",
+        "url": "https://articulatevision.com"
+      },
+      "homepage": "https://github.com/ZachArticulateV/designer-pro-and-seo",
+      "repository": "https://github.com/ZachArticulateV/designer-pro-and-seo",
+      "license": "MIT",
+      "category": "design",
+      "keywords": [
+        "seo",
+        "design",
+        "web",
+        "ui-ux",
+        "accessibility",
+        "cro",
+        "design-system",
+        "qa",
+        "cms-port",
+        "build-workflow"
+      ]
+    }
+  ]
+}

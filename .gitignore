@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Claude Code worktrees / local agent state
+.claude/worktrees/
+
+# Secrets — never commit credentials (MCP servers read these from the environment)
+.env
+.env.*
+*.local
+
+# Generated/output artifacts (skills write into the user's workspace, not here)
+/tmp/
+*.log
+
+# Internal process docs — kept locally, not shipped in the public plugin
+docs/
+
+# Clean-room denylist — real client/brand names kept local, never shipped
+.clean-room-denylist

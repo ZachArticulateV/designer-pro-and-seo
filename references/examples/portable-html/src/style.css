@@ -1,0 +1,7 @@
+:root { --primary: #2c61dd; --text: #202532; }
+* { box-sizing: border-box; }
+body { font-family: Inter, system-ui, sans-serif; color: var(--text); margin: 0; }
+main { max-width: 640px; margin: 12vh auto; padding: 0 24px; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+button { background: var(--primary); color: #fff; border: 0; border-radius: 6px; padding: 12px 20px; font-size: 1rem; cursor: pointer; }
+button:focus-visible { outline: 3px solid #ea832e; outline-offset: 2px; }

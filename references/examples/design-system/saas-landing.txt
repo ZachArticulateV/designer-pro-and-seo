@@ -1,0 +1,35 @@
+============================================================
+DESIGN SYSTEM  —  saas-landing / saas
+============================================================
+Pattern:    hero-centric
+Style:      minimal — Restrained layouts with generous whitespace and few visual elements
+Palette:    saas-trustworthy-cool
+  primary #2c61dd  secondary #6954d4  accent #ea832e
+  bg #fbfbfc  surface #f2f3f5  text #202532  (text/bg 14.8, AA pass)
+  on-primary text #ffffff  |  success #2e9e5d  warning #ec9c13  error #d02a25
+Type:       modern-neutral — Inter 600 / Inter 400
+Effects:    radius 6px | shadow subtle (0 1px 2px rgba(0,0,0,.06)) | motion 150ms ease-out
+Sections:   hero, social-proof, features, pricing, faq, cta
+Avoid:      wall-of-text hero, no pricing, vague value prop, kids, discount-retail
+
+Pre-delivery checklist:
+  [ ] One primary CTA per view
+  [ ] Value proposition visible without scrolling
+  [ ] Tap targets at least 44x44 px
+  [ ] Body text contrast ratio >= 4.5:1
+  [ ] Visible focus indicator on all interactive elements
+  [ ] Every image has meaningful or empty alt
+  [ ] Forms use inline validation
+  [ ] Minimize required form fields
+  [ ] Logical heading hierarchy (one h1)
+  [ ] Page reflects intent in first 3 seconds
+  [ ] Trust signals near conversion points
+  [ ] Respect prefers-reduced-motion
+  [ ] Error messages are specific and actionable
+  [ ] Navigation is predictable and consistent
+  [ ] Above-the-fold load under 2.5s LCP
+  [ ] Cumulative layout shift under 0.1
+  [ ] Interaction latency (INP) under 200ms
+  [ ] Images sized and lazy-loaded below fold
+  [ ] Semantic HTML over div soup
+  [ ] Confirmation before destructive actions

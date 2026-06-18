@@ -1,0 +1,33 @@
+rule,category,priority,platform,rationale,check,tags
+One primary CTA per view,conversion,critical,all,Competing CTAs split attention and lower conversion,Count primary buttons above the fold; should be 1,cta;hierarchy
+Value proposition visible without scrolling,conversion,critical,all,Visitors decide to stay in seconds based on the first screen,Is the core promise readable above the fold,hero;messaging
+Tap targets at least 44x44 px,accessibility,critical,mobile,Small targets cause mis-taps and frustration on touch,Measure interactive element sizes on mobile,mobile;a11y
+Body text contrast ratio >= 4.5:1,accessibility,critical,all,WCAG AA minimum for normal text legibility,Run contrast check on body text vs background,a11y;contrast
+Visible focus indicator on all interactive elements,accessibility,critical,all,Keyboard users must see where focus is,Tab through the page and confirm visible focus,a11y;keyboard
+Every image has meaningful or empty alt,accessibility,high,all,Screen readers and image SEO depend on alt text,Audit img alt attributes,a11y;seo;images
+Forms use inline validation,conversion,high,all,Catching errors early reduces abandonment,Trigger an invalid field and confirm inline feedback,forms;friction
+Minimize required form fields,conversion,high,all,Each extra field reduces completion rate,Count required fields; remove any non-essential,forms;friction
+Logical heading hierarchy (one h1),seo,high,all,Structure aids both SEO and screen-reader navigation,Check there is exactly one h1 and ordered headings,seo;a11y;structure
+Page reflects intent in first 3 seconds,conversion,high,all,Mismatch between ad/search intent and page kills trust,Does the headline match the likely entry query,messaging;intent
+Trust signals near conversion points,conversion,high,all,Proof reduces risk perception at the decision moment,Are testimonials/guarantees near the CTA,trust;cta
+Consistent spacing scale,visual,medium,all,A spacing system creates visual rhythm and polish,Are margins/paddings from a defined scale,spacing;system
+Limit typeface count to two,visual,medium,all,Too many fonts looks unprofessional and slows load,Count distinct font families,typography;performance
+Respect prefers-reduced-motion,accessibility,high,all,Motion can trigger vestibular discomfort,Enable reduced-motion and confirm animations reduce,a11y;motion
+Touch and click feedback within 100ms,interaction,medium,all,Immediate feedback feels responsive,Interact and confirm visible state change is instant,interaction;perf
+Error messages are specific and actionable,ux,high,all,Vague errors leave users stuck,Trigger errors and read the messages,forms;copy
+Navigation is predictable and consistent,ux,high,all,Consistent nav lowers cognitive load,Is nav in the same place across pages,navigation
+Mobile menu is reachable with one thumb,ux,medium,mobile,Thumb-zone reachability affects usability,Is the menu toggle in the lower/upper-reachable zone,mobile;navigation
+Above-the-fold load under 2.5s LCP,performance,critical,all,LCP is a Core Web Vital and affects ranking + UX,Measure Largest Contentful Paint,performance;cwv
+Cumulative layout shift under 0.1,performance,high,all,Layout shift causes mis-clicks and feels broken,Measure CLS; reserve space for media,performance;cwv
+Interaction latency (INP) under 200ms,performance,high,all,INP measures real responsiveness to input,Measure INP under interaction,performance;cwv
+Images sized and lazy-loaded below fold,performance,high,all,Right-sizing and lazy loading cut payload,Check srcset/sizes and loading=lazy,performance;images
+Readable line length 50-75 characters,visual,medium,all,Over-long lines hurt reading comprehension,Measure characters per line in body copy,typography;readability
+Sufficient white space around key elements,visual,medium,all,Whitespace directs attention and signals quality,Is the primary CTA given breathing room,spacing;hierarchy
+Skip-to-content link for keyboard users,accessibility,medium,all,Lets keyboard users bypass repeated nav,Tab from top and confirm a skip link,a11y;keyboard
+Semantic HTML over div soup,accessibility,high,all,Semantics drive assistive tech and SEO,Inspect for nav/main/header/footer/section,a11y;seo;structure
+Consistent and descriptive link text,seo,medium,all,Descriptive links help SEO and screen readers,Avoid click-here; use meaningful anchor text,seo;a11y;copy
+Confirmation before destructive actions,ux,high,all,Prevents accidental irreversible loss,Does delete/remove ask for confirmation,safety;forms
+Dark mode maintains contrast,accessibility,medium,all,Dark themes often fail contrast if unchecked,Run contrast checks in dark mode,a11y;contrast;dark
+Single clear next step on thank-you pages,conversion,medium,all,Post-conversion momentum increases LTV,Is there one logical next action after convert,conversion;retention
+Sticky CTA on long mobile pages,conversion,medium,mobile,Keeps the action reachable during long scroll,Is a persistent CTA present on mobile,mobile;cta
+Empty states guide the user,ux,medium,all,Empty screens should teach the next action,Check empty states for guidance not blanks,ux;onboarding
