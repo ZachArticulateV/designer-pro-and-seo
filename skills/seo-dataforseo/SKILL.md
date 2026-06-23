@@ -73,6 +73,9 @@ Always state which tier ran and which metrics need DataForSEO.
 
 ## Notes
 
+"AI visibility" here means **measuring/tracking** LLM mentions with hard data
+(Tier-1); to **optimize** a page for AI citation, use `seo-geo` (free, on-page).
+
 When connected, this is the data plumbing other skills draw on (`seo-backlinks`,
 `seo-cluster`, `seo-ecommerce`, `seo-local-unified`, `seo-content-brief`,
 `seo-sxo`). Each of those also has its own free path; none hard-fails without this.

@@ -27,7 +27,7 @@ one session, and from the repo root you can verify the bundled scripts:
 python3 scripts/smoke_test.py      # use `py` on Windows
 ```
 
-Expect `32/32 checks passed.`
+Expect `36/36 checks passed.`
 
 ## 3. First run — the golden path (all free)
 

@@ -63,5 +63,8 @@ study, Aggarwal et al., KDD 2024).
 
 ## Notes
 
+"AI visibility" here means **optimizing** content to get cited (the free, on-page
+path); to **measure/track** LLM mentions with hard data, use `seo-dataforseo` (paid MCP).
+
 GEO moves fast — refresh the llms.txt guidance and AI-crawler list periodically.
 The checker degrades gracefully offline (score content with `--content` alone).

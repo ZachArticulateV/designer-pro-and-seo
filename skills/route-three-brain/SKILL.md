@@ -25,7 +25,7 @@ opinion" / "sanity check," route to Codex via `route-codex-review`.
 ## Triggers
 
 - "three brain" / "tri-brain" / "route this" / "which model"
-- "delegate to codex" / "delegate to gemini" / "second opinion" / "best model for X"
+- "delegate to codex" / "delegate to gemini" / "best model for X"
 
 ## Inputs
 

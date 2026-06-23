@@ -48,7 +48,7 @@ web/browser tools + bundled scripts otherwise, so none hard-depends on a paid to
 
 ## Shipping scripts (all stdlib-only, smoke-tested)
 
-`scripts/smoke_test.py` verifies the install (32/32) and `scripts/verify_release.py`
+`scripts/smoke_test.py` verifies the install (36/36) and `scripts/verify_release.py`
 is the release gate. The 13 CLI tools (15 scripts total, counting those two):
 `design/design_system.py`, `design/gen_palettes.py`, `design/render_page.py`,
 `design/tokens_emit.py`, `workflow/portable_html.py`, `workflow/csv_to_report.py`,

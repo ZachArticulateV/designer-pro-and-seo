@@ -58,8 +58,10 @@ def score_passages(text):
         sentences = max(1, len(re.findall(r"[.!?]+", p)))
         has_specific = bool(SPECIFIC.search(p))
         standalone = not bool(DEPENDENT_START.match(p))
-        # citable: specific claim + readable in isolation + substantive length
-        is_citable = has_specific and standalone and 15 <= words <= 120
+        # citable: specific claim + readable in isolation, capped so each passage makes
+        # one clear claim. No lower-word floor — a short, sourced, standalone stat (the
+        # densest, most-quotable form) must not be rejected for being concise.
+        is_citable = has_specific and standalone and words <= 120
         if is_citable:
             citable += 1
         reasons = []

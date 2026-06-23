@@ -26,7 +26,7 @@ Code plugin developed in the open. Issues and pull requests are welcome.
 Run both gates from the repo root (use `py` instead of `python3` on Windows):
 
 ```text
-python3 scripts/smoke_test.py        # expect "32/32 checks passed."
+python3 scripts/smoke_test.py        # expect "36/36 checks passed."
 python3 scripts/verify_release.py    # expect every check PASS
 ```
 

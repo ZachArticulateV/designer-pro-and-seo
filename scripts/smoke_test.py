@@ -191,6 +191,74 @@ def main():
     check("design_system --human matches golden fixture", ok,
           "exact match (newlines normalized)" if ok else "drift vs saas-landing.txt (regenerate if intended)")
 
+    # 8. Regression guards for the v0.4.2 correctness fixes
+    with tempfile.TemporaryDirectory() as td:
+        # design_system honors a keyword that NAMES a style, but a lone common adjective
+        # (here "clean", a token of "corporate-clean") must NOT hijack the default.
+        def _ds(keywords):
+            r = subprocess.run(py() + [os.path.join(ROOT, "scripts", "design", "design_system.py"),
+                 "--product-type", "saas-landing", "--industry", "saas", "--keywords", keywords],
+                 capture_output=True, encoding="utf-8")
+            try:
+                return json.loads(r.stdout) if r.returncode == 0 else None
+            except json.JSONDecodeError:
+                return None
+        pos, neg = _ds("brutalist"), _ds("clean")
+        override_ok = bool(pos and neg
+            and pos.get("style", {}).get("name") == "brutalist"
+            and any("overrode the product default" in fb for fb in pos.get("_fallbacks", []))
+            and neg.get("style", {}).get("name") == "minimal"
+            and not any("overrode the product default" in fb for fb in neg.get("_fallbacks", [])))
+        check("design_system honors an explicit style keyword (not a lone adjective)", override_ok,
+              "brutalist overrides; 'clean' does not hijack the default" if override_ok
+              else "override matching is wrong (explicit name ignored or adjective hijacked)")
+
+        # tokens_emit creates a fresh --out-dir (was: failed on first invocation)
+        sc = subprocess.run(py() + [os.path.join(ROOT, "scripts", "design", "design_system.py"),
+             "--product-type", "saas-landing", "--industry", "saas", "--keywords", "modern"],
+             capture_output=True, encoding="utf-8")
+        dj = os.path.join(td, "ds.json"); open(dj, "w", encoding="utf-8").write(sc.stdout)
+        fresh = os.path.join(td, "fresh", "tokens")   # nested dir that does not exist yet
+        rt = subprocess.run(py() + [os.path.join(ROOT, "scripts", "design", "tokens_emit.py"),
+             "--design-json", dj, "--format", "all", "--out-dir", fresh],
+             capture_output=True, encoding="utf-8")
+        emitted = ["tokens.css", "_tokens.scss", "tailwind.tokens.js", "tokens.json"]
+        files_ok = rt.returncode == 0 and all(os.path.exists(os.path.join(fresh, f)) for f in emitted)
+        check("tokens_emit.py writes into a fresh --out-dir", files_ok,
+              "4 token files created" if files_ok else (rt.stderr.strip()[:120] or rt.stdout.strip()[:120]))
+
+        # geo_check counts a short, sourced, standalone stat as citable (no word floor)
+        gp = os.path.join(td, "stat.md")
+        open(gp, "w", encoding="utf-8").write(
+            "Salesforce holds 23% market share as of January 2026, per Gartner.\n")
+        rg2 = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "geo_check.py"),
+             "--content", gp, "--no-network"], capture_output=True, encoding="utf-8")
+        citable_ok = False
+        if rg2.returncode == 0:
+            try:
+                citable_ok = json.loads(rg2.stdout).get("citability", {}).get("citable", 0) >= 1
+            except json.JSONDecodeError:
+                citable_ok = False
+        check("geo_check counts a short sourced stat as citable", citable_ok,
+              "short sourced claim is citable" if citable_ok
+              else "word floor still rejects a sourced one-liner")
+
+        # tech_audit exits non-zero (and surfaces an error) on bad input: a missing
+        # --file, and a bad URL scheme (whose scheme-only "Not served over HTTPS"
+        # finding must not mask the failure).
+        def _ta(*cli):
+            r = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "tech_audit.py"),
+                 *cli, "--no-network"], capture_output=True, encoding="utf-8")
+            try:  # require a real JSON report with errors, so a crash can't pass as "errored"
+                has_err = bool(json.loads(r.stdout).get("errors"))
+            except (json.JSONDecodeError, AttributeError, TypeError):
+                has_err = False
+            return r.returncode != 0 and has_err
+        miss = os.path.join(td, "does-not-exist.html")
+        err_ok = _ta("--file", miss) and _ta("--url", "ftp://example.com")
+        check("tech_audit errors on bad input (missing file / bad URL scheme)", err_ok,
+              "exit 1 + error on both" if err_ok else "silently returned exit 0 on bad input")
+
     passed = sum(1 for _, ok, _ in results if ok)
     total = len(results)
     print(f"\n{passed}/{total} checks passed.")

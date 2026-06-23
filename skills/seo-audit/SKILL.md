@@ -36,15 +36,18 @@ crawling (up to ~500 pages, business-type auto-detect at scale) activates when t
    pages; otherwise audit the provided URLs and say so.
 2. **Profile.** Infer business type (SaaS / e-commerce / local / publisher /
    agency) from the content to decide which conditional specialists apply.
-3. **Dispatch the shipping specialists** (each one-directional, no back-edges):
+3. **Dispatch the specialists** (each one-directional, no back-edges). Always run the
+   core on-page set:
    - `seo-page` — per-URL on-page review
    - `seo-technical` — technical dimensions (`tech_audit.py`)
    - `seo-schema` — structured-data validation
    - `seo-sitemap` — sitemap structure + gates
    - `seo-image-audit` — image SEO
-   As more specialists ship (`seo-content`, `seo-geo`, `seo-google`,
-   `seo-backlinks`, `seo-local-unified`, `seo-ecommerce`, …) they join here; until
-   then, note which dimensions weren't covered rather than implying they were.
+   Then add the specialists the profile calls for: `seo-content` (content depth /
+   E-E-A-T) and `seo-geo` (AI-citability) by default, plus `seo-local-unified` for a
+   local business or `seo-ecommerce` for a store. When their tools are connected, also
+   run `seo-google` (real CWV / rankings) and `seo-backlinks`. Record which specialists
+   ran and which were skipped (and why) rather than implying coverage you didn't run.
 4. **Aggregate + score.** Weighted health score (0–100): Technical 30, On-page/
    content 30, Structured data 15, Images 10, Sitemap/crawl 15 (re-normalize over
    the specialists actually run, and report the weighting used).
@@ -61,9 +64,11 @@ crawling (up to ~500 pages, business-type auto-detect at scale) activates when t
 
 ## Dependencies
 
-- Shipping specialists: `seo-page`, `seo-technical`, `seo-schema`, `seo-sitemap`,
+- Core specialists (always): `seo-page`, `seo-technical`, `seo-schema`, `seo-sitemap`,
   `seo-image-audit`
-- Optional: `seo-firecrawl` (full crawl), plus other `seo-*` specialists as they ship
+- Conditional specialists (by business type / connected tooling): `seo-content`,
+  `seo-geo`, `seo-local-unified`, `seo-ecommerce`, `seo-google`, `seo-backlinks`
+- Optional: `seo-firecrawl` (full-site crawl)
 
 ## Notes
 

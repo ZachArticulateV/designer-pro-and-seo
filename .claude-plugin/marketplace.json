@@ -11,7 +11,7 @@
       "name": "designer-pro-and-seo",
       "source": "./",
       "description": "Web design + SEO + build-workflow skills: design-system generation + on-brand page rendering, design tokens, build briefs, pre-delivery QA, portable-HTML porting for any CMS, and a full SEO suite (technical, schema, sitemap, content, GEO, hreflang, drift, local, e-commerce). 45 stable skills, tool-aware (use a dedicated MCP/CLI when present, else built-in web/browser), mostly free-tier. Original, clean-room content.",
-      "version": "0.4.1",
+      "version": "0.4.2",
       "author": {
         "name": "Zachary W.",
         "url": "https://articulatevision.com"

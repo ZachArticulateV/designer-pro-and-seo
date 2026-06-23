@@ -117,6 +117,12 @@ def main():
 
     formats = list(EMITTERS) if args.format == "all" else [args.format]
     written = []
+    if not args.to_stdout:
+        try:
+            os.makedirs(args.out_dir, exist_ok=True)
+        except OSError as e:
+            print(json.dumps({"error": "could not create out-dir %s: %s" % (args.out_dir, e)}))
+            sys.exit(1)
     for fmt in formats:
         fname, fn = EMITTERS[fmt]
         content = fn(t)

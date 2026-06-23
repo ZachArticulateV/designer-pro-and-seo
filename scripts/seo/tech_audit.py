@@ -265,6 +265,16 @@ def main():
     else:
         print(json.dumps(report, indent=2))
 
+    # Exit non-zero when no page content could be analyzed but an error was recorded
+    # (missing --file, unreachable/invalid URL, no input) so callers and CI detect the
+    # failure instead of reading an empty report as a clean pass. The gate keys off
+    # whether real HTML was analyzed (no content -> `not html`, covering both a missing
+    # file and an empty/unreadable one) — a synthetic, scheme-only finding like "Not
+    # served over HTTPS" must not mask a bad-input failure. A successful audit (a read
+    # page with content) has html set and exits 0.
+    if not html and report["errors"]:
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     import sys

@@ -78,11 +78,36 @@ def pick_product(rows, product_type, industry, qtokens):
 
 
 def pick_style(rows, want_style, qtokens, mood_tokens):
+    """Returns (row, matched_bool, override).
+
+    `override` is (default_style, chosen_style) when the user's keywords explicitly
+    name a style other than the product's recommended default; in that case the engine
+    honors the stated intent and the caller records the swap in "_fallbacks", so an
+    explicit style keyword is never silently discarded.
+    """
     if not rows:
-        return None, False
-    for r in rows:
-        if r.get("style", "").lower() == (want_style or "").lower():
-            return r, True
+        return None, False, None
+    want_lc = (want_style or "").lower()
+    want_row = next((r for r in rows if r.get("style", "").lower() == want_lc), None)
+
+    if want_row is not None:
+        # A keyword set that explicitly NAMES another style on file overrides the
+        # product default. "Names" means every token of that style's name appears in
+        # the keywords (subset), so a lone common adjective ("clean", "dark", "soft")
+        # can't hijack a multi-word style, and "brutalist" can't ambiguously match
+        # "neo-brutalist". Ties prefer the most specific (longest) name, then CSV order.
+        named, named_score = None, 0
+        for r in rows:
+            if r is want_row:
+                continue
+            name_tokens = _tokens(r.get("style"))
+            if name_tokens and name_tokens <= qtokens and len(name_tokens) > named_score:
+                named, named_score = r, len(name_tokens)
+        if named is not None:
+            return named, True, (want_row.get("style"), named.get("style"))
+        return want_row, True, None
+
+    # No exact default row on file: score by keyword/mood overlap (closest wins).
     best, best_s = None, 0
     q = qtokens | mood_tokens | _tokens(want_style)
     for r in rows:
@@ -92,7 +117,7 @@ def pick_style(rows, want_style, qtokens, mood_tokens):
             s -= 2
         if s > best_s:
             best, best_s = r, s
-    return (best, True) if best_s > 0 else (rows[0], False)
+    return (best, True, None) if best_s > 0 else (rows[0], False, None)
 
 
 def pick_palette(rows, industry, palette_mood, qtokens):
@@ -160,12 +185,15 @@ def compose(args):
     anti_from_product = (prod.get("anti_patterns") if prod else "")
 
     mood_tokens = _tokens(palette_mood) | _tokens(typo_mood)
-    style, style_ok = pick_style(styles, want_style, qtokens, mood_tokens)
+    style, style_ok, style_override = pick_style(styles, want_style, qtokens, mood_tokens)
     palette, palette_ok = pick_palette(palettes, args.industry, palette_mood, qtokens)
     typo, typo_ok = pick_typography(fonts, typo_mood, args.product_type, qtokens)
 
     if styles and not style_ok:
         fallbacks.append("style: no strong match — returned closest available (refine keywords to improve)")
+    elif style_override:
+        fallbacks.append("style: keyword '%s' overrode the product default '%s' (drop the keyword to keep the default)"
+                         % (style_override[1], style_override[0]))
     if palettes and not palette_ok:
         fallbacks.append("palette: no strong match — returned closest available")
     if fonts and not typo_ok:

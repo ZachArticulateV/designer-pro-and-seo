@@ -1,5 +1,42 @@
 # Release Notes
 
+## v0.4.2 — 2026-06-22 — judge-panel correctness pass
+
+Acted on a multi-judge review (six specialist judges + an adversarial red-team).
+Six confirmed, non-destructive fixes; the aggressive cuts the red-team flagged as
+destructive (cut `seo-page`, cut the `route-*` skills, split the plugin) were
+deliberately *not* taken. Codex-reviewed; gates green (smoke 36/36, release gate
+23/23).
+
+### Correctness fixes
+- **design engine honors explicit style keywords.** A keyword naming a different
+  style than the product default (e.g. `brutalist` on a saas-landing) was silently
+  ignored — the engine returned the default with an empty `_fallbacks`, violating its
+  own honesty contract. Keywords that name a style now win and the swap is recorded in
+  `_fallbacks`.
+- **`tokens_emit.py` creates a fresh `--out-dir`.** The primary file-emitting path
+  failed on a clean first invocation (no `os.makedirs`); it now creates the directory.
+- **`geo_check.py` no longer false-negatives short sourced stats.** A 15-word floor
+  rejected the densest, most-citable passages (a one-sentence claim with a number,
+  date, and named source). The floor is removed for passages that are specific and
+  standalone.
+- **`tech_audit.py` exits non-zero on a missing `--file`** (and surfaces the error)
+  instead of silently returning an empty report with exit 0.
+
+### Truth-in-advertising + triggers
+- **`seo-audit`** now reflects that all specialists are shipped/Stable: it dispatches a
+  core on-page set always and adds `seo-content`/`seo-geo` plus business-type and
+  tool-gated specialists conditionally — removing the stale "until they ship" prose
+  that contradicted the 45/45-Stable claim.
+- **Trigger de-duplication.** Removed the duplicated `"second opinion"` phrase from
+  `route-three-brain`'s trigger list (it stays on `route-codex-review`), and added a
+  reciprocal `"AI visibility"` disambiguator between `seo-geo` (optimize, free) and
+  `seo-dataforseo` (measure, paid).
+
+### Tests
+- Four regression guards added to `scripts/smoke_test.py` (one per code fix); smoke is
+  now 36/36.
+
 ## v0.4.1 — 2026-06-17 — installable + audit fixes
 
 Acted on a full external audit (five deep-dive agents + a plugin-spec conformance
