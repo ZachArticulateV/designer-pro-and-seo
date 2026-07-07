@@ -306,6 +306,12 @@ class AuditAggregateTest(unittest.TestCase):
             self.assertEqual(rc, 0)
             self.assertEqual(json.loads(out)["overall_score"], 85.0)
 
+    def test_missing_file_nonzero_with_json_error(self):
+        rc, out, err = _run(self.SCRIPT, ["--file", "/no/such/scores.json"])
+        self.assertNotEqual(rc, 0)
+        self.assertIn("error", json.loads(out))
+        self.assertNotIn("Traceback", err)
+
     def test_human_is_ascii(self):
         rc, out, _ = self._agg({"seo-technical": 80, "seo-page": 90},
                                extra=["--human"])
