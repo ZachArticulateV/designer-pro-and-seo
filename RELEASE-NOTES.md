@@ -1,5 +1,29 @@
 # Release Notes
 
+## v1.8.0 — 2026-09-25 — seo-hreflang + seo-ecommerce promoted to Core (loop cycle 8 of 10)
+
+**22 Core · 20 Lite · 3 routing.**
+- **`hreflang_tools.py`**: the full ISO 639-1 list, ISO 15924 script subtags
+  (`zh-Hant-TW`), and fix-it hints for the classic mistakes (`en-uk`→`GB`, `jp`→`ja`,
+  numeric `es-419`, `EU`). New **`--cluster`** audit across pages (manifest
+  `{url: file}` or files with canonicals): missing annotations, invalid codes,
+  self-reference, **return links**, one code per URL, x-default presence +
+  consistency, `<html lang>` agreement, noindex alternates, cross-locale canonicals —
+  codes H1–H12 with a score. `x-default` is correctly excluded from self-reference and
+  return-link checks (caught by the new tests).
+- **New `scripts/seo/product_audit.py`**: merchant-listing readiness with
+  **markup-vs-page agreement** (price visible — cents must match, rating visible,
+  InStock vs "sold out"), expired `priceValidUntil`, availability, GTIN/MPN/brand,
+  return policy (Offer or Organization) and shipping details, variants without a
+  ProductGroup, H1, thin copy (P1–P14, reusing `schema_gen.py`); category hygiene —
+  self-canonical indexable facets, page N → page 1 canonicals, noindexed pagination,
+  indexable sort URLs, thin category copy, ItemList (C1–C6).
+- New references `references/seo-hreflang/cluster-rules.md` and
+  `references/seo-ecommerce/merchant-checks.md`; golden examples for both (hreflang
+  68/100; product 40/100, category 86/100 — pinned).
+- Gates: smoke 38/38, 616 unit tests (+15 in `tests/test_hreflang_commerce.py`),
+  verify_release 56/56.
+
 ## v1.7.0 — 2026-09-25 — seo-image-audit promoted to Core (loop cycle 7 of 10)
 
 **20 Core · 22 Lite · 3 routing.** Image SEO moves from a by-hand checklist to an engine.

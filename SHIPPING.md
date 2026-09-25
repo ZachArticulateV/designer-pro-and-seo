@@ -7,10 +7,10 @@ with this file. (See README for the narrative version.)
 Legend: ✅ Stable (built, verified, supported) · 🟡 In development (scaffolded,
 not released, excluded from functional claims & support).
 
-Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **20 Core · 22 Lite ·
+Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **22 Core · 20 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.7.0) — 45 skills
+## ✅ Shipping (v1.8.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -40,10 +40,10 @@ free/built-in path — see `references/CAPABILITY-TIERS.md`.
 Orthogonal to Stable, every Stable skill also sits in one **depth tier** — the honest
 "how deep is it" signal introduced with v1 "Deep Core."
 
-- **Core (20)** — deepened this release into a real 3-layer skill: earned per-skill
+- **Core (22)** — deepened this release into a real 3-layer skill: earned per-skill
   `references/` and/or a wired dispatch layer (real Agent-tool fan-out, plus the
   flagship differentiators). These are the skills v1 raises to a higher level.
-- **Lite (22)** — Stable, with a real free/built-in path, but single-file; slated for
+- **Lite (20)** — Stable, with a real free/built-in path, but single-file; slated for
   the same depth pass in **v1.1 "Depth Sweep."** Lite means "not yet 3-layer," not
   "lesser quality."
 - **Routing (3)** — the three-brain hand-off skills (Claude drives; Codex reviews;
@@ -54,12 +54,12 @@ fails if any skill is missing, invented, or double-counted, so the count claim i
 mechanically un-fakeable.
 
 ```depth-tiers
-core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy, seo-technical, seo-schema, seo-page, seo-content, seo-sitemap, seo-image-audit
-lite:    design-dimensions, design-motion, design-system-persist, design-tokens-emit, design-cro, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-content-brief, seo-sxo, seo-hreflang, seo-competitor-pages, seo-programmatic, seo-ecommerce, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
+core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy, seo-technical, seo-schema, seo-page, seo-content, seo-sitemap, seo-image-audit, seo-hreflang, seo-ecommerce
+lite:    design-dimensions, design-motion, design-system-persist, design-tokens-emit, design-cro, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-content-brief, seo-sxo, seo-competitor-pages, seo-programmatic, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
 routing: route-three-brain, route-codex-review, route-gemini-context
 ```
 
-**45 Stable = 20 Core + 22 Lite + 3 routing.**
+**45 Stable = 22 Core + 20 Lite + 3 routing.**
 
 ## 🟡 In development — 0 skills
 
@@ -84,7 +84,7 @@ library (`design/match.py` is library-only, the ranker behind `design_system.py`
 - **seo/** — `ai_crawlers` (the one AI-crawler registry + RFC 9309 robots evaluator),
   `business_type`, `content_audit` (8-dimension content-quality audit), `crawl_inventory`, `drift_baseline` / `drift_compare` /
   `drift_history` / `drift_severity` / `drift_tools`, `geo_check`, `geogrid`,
-  `hreflang_tools`, `image_audit` (image SEO + stdlib header parsing), `link_graph` (internal-link architecture), `llms_txt` (llms.txt generate/validate), `nap_check`, `page_fetch`, `schema_gen`, `serp_cluster`,
+  `hreflang_tools`, `image_audit` (image SEO + stdlib header parsing), `link_graph` (internal-link architecture), `llms_txt` (llms.txt generate/validate), `nap_check`, `page_fetch`, `product_audit` (merchant listing + category hygiene), `schema_gen`, `serp_cluster`,
   `site_map`, `sitemap_tools`, `tech_audit`
 - **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
   `net_safety` (the one shared SSRF guard), `portable_html`
