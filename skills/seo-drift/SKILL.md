@@ -36,7 +36,7 @@ SSRF guard.
 
 1. **Capture a baseline into the SQLite store** (before a deploy, or at handoff):
    ```
-   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/drift_baseline.py" --url <URL> --db .seo-drift/baselines.db --label pre-deploy   # or --file page.html
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/drift_baseline.py" --url <URL> --db .seo-drift/baselines.db --label pre-deploy   # or --file page.html; add --robots robots.txt for rule D15
    ```
    Records title, meta description, h1, canonical, meta robots, OG tags, schema-block
    count, h2 count, and word count (the canonical capture set from `drift_tools.py`),

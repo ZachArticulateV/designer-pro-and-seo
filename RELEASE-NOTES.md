@@ -1,5 +1,27 @@
 # Release Notes
 
+## v1.4.0 — 2026-09-25 — AI-search visibility depth (loop cycle 4 of 10)
+
+Access → coverage → extractability: the three things that decide whether an AI answer
+surface cites a page, each now measured.
+- **New `scripts/seo/llms_txt.py`** — generate (`--generate site.json`, or
+  `--from-urls` grouping by path segment) and validate llms.txt against the public
+  proposal's structure (one H1 first, blockquote summary, H2 link lists, absolute
+  URLs, duplicates, empty sections, size) with a 0-100 score. `geo_check.py` now scores
+  the llms_txt category from this structural validation (invalid → capped at 60)
+  instead of "has a `#`", and accepts `--llms FILE` offline.
+- **Query fan-out coverage** — `geo_check.py --questions subqs.txt` finds the best
+  passage per AI Mode sub-question and reports covered / missing terms (a stated
+  lexical proxy; covered rows also say whether the answering passage is citable).
+- **seo-drift rule D15** — `drift_baseline.py` / `drift_compare.py --robots` snapshot the
+  shared AI-crawler verdict; a deploy that blocks AI-search crawlers or a search engine
+  is **critical**, a partial block **high**, a training-only change advisory.
+- New `references/seo-geo/ai-surfaces-2026.md` (per-surface playbook: AI Overviews,
+  AI Mode, ChatGPT search, Perplexity, Claude, Copilot; fan-out method; honest AI
+  visibility measurement). seo-geo gains the fan-out and llms.txt steps.
+- Gates: smoke 38/38 (new llms_txt generate→validate), 559 unit tests (+16 in
+  `tests/test_ai_visibility.py`), verify_release 56/56.
+
 ## v1.3.0 — 2026-09-25 — seo-schema promoted to Core (loop cycle 3 of 10)
 
 `seo-schema` becomes a 3-layer Core skill (**16 Core · 26 Lite · 3 routing**).

@@ -10,7 +10,7 @@ not released, excluded from functional claims & support).
 Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **16 Core · 26 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.3.0) — 45 skills
+## ✅ Shipping (v1.4.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -75,7 +75,7 @@ web/browser tools + bundled scripts otherwise, so none hard-depends on a paid to
 
 ## Shipping scripts (all stdlib-only, smoke-tested)
 
-`scripts/smoke_test.py` verifies the install (37/37) and `scripts/verify_release.py`
+`scripts/smoke_test.py` verifies the install (38/38) and `scripts/verify_release.py`
 is the release gate. Every other script is a standalone CLI **and** an importable
 library (`design/match.py` is library-only, the ranker behind `design_system.py`):
 
@@ -84,7 +84,7 @@ library (`design/match.py` is library-only, the ranker behind `design_system.py`
 - **seo/** — `ai_crawlers` (the one AI-crawler registry + RFC 9309 robots evaluator),
   `business_type`, `crawl_inventory`, `drift_baseline` / `drift_compare` /
   `drift_history` / `drift_severity` / `drift_tools`, `geo_check`, `geogrid`,
-  `hreflang_tools`, `nap_check`, `page_fetch`, `schema_gen`, `serp_cluster`,
+  `hreflang_tools`, `llms_txt` (llms.txt generate/validate), `nap_check`, `page_fetch`, `schema_gen`, `serp_cluster`,
   `site_map`, `sitemap_tools`, `tech_audit`
 - **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
   `net_safety` (the one shared SSRF guard), `portable_html`

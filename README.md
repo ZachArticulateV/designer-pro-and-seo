@@ -35,7 +35,7 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.3.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **16 Core,
+> **Shipping status (v1.4.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **16 Core,
 > 26 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
 > APIs, smoke-tested). Core skills are 3-layer (earned references + real Agent-tool
 > fan-out); Lite skills are Stable single-file, deepened next in v1.1. Every skill
@@ -65,7 +65,7 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.3.0) — 45 Stable, mostly free-tier
+## Shipping skills (v1.4.0) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
 **★ marks the 16 Core** skills (deepened this release — earned reference docs and/or a
@@ -129,7 +129,7 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 - `seo-backlinks` — backlink profile: referring domains, anchors, toxic flags, competitor gap.
 - `seo-image-gen` — generate SEO-ready images (OG, heroes, infographics, favicons) at correct dimensions.
 
-Backed by **33 scripts** — all standard-library-only Python; every one but the design
+Backed by **34 scripts** — all standard-library-only Python; every one but the design
 ranker library is also a runnable CLI.
 "Standard-library-only" means they use only what ships with Python, so there is
 **nothing to `pip install`**. They include the design engine + palette generator, page

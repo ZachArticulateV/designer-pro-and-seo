@@ -1,6 +1,6 @@
 {
   "name": "designer-pro-and-seo",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "45 Stable skills (16 Core, 26 Lite, 3 routing) for web design + SEO in Claude Code: design systems, on-brand page rendering, design tokens, build briefs, pre-delivery QA, and CMS porting, plus a full SEO suite (technical, schema, sitemap, content, GEO, hreflang, drift, local, e-commerce) with a real parallel-dispatch audit. Free-first and tool-aware (built-in web/browser by default, dedicated MCP/CLI when present). Free and MIT-licensed.",
   "author": {
     "name": "Zachary W.",

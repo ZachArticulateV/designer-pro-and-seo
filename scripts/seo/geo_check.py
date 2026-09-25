@@ -39,6 +39,7 @@ from net_safety import (  # noqa: E402
 )
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ai_crawlers  # noqa: E402  (shared AI-crawler registry + robots evaluator)
+import llms_txt  # noqa: E402  (llms.txt structure validator)
 
 UA = "Mozilla/5.0 (compatible; designer-pro-seo-geo/1.0)"
 TRAINING_BOTS = ai_crawlers.TRAINING_BOTS      # back-compat re-exports
@@ -207,6 +208,66 @@ def analyze_robots(text):
     }
 
 
+# --- query fan-out coverage ---------------------------------------------------
+# AI Mode / AI Overviews decompose one query into many sub-questions and cite the
+# passage that answers each. Given the sub-questions a page should answer, find the
+# best passage per question by content-token overlap and say which are covered.
+
+_STOP = set("""a an and are as at be by can do does for from how i in is it its of on or
+should the their there this to was what when where which who why will with you your
+vs versus than then into about over under after before not no yes my our we they
+much many get make need best good""".split())
+
+
+def _stem(w):
+    for suf in ("ing", "ies", "ed", "es", "s"):
+        if len(w) > len(suf) + 2 and w.endswith(suf):
+            return w[: -len(suf)] + ("y" if suf == "ies" else "")
+    return w
+
+
+def _content_tokens(text):
+    return {_stem(w) for w in re.findall(r"[a-z0-9]+", text.lower())
+            if w not in _STOP and len(w) > 1}
+
+
+def fanout_coverage(text, questions, threshold=0.6):
+    """For each sub-question, the best-matching passage and whether it is covered
+    (>= threshold of the question's content tokens appear in one passage). Deterministic;
+    a lexical proxy — it cannot judge whether the answer is *correct*."""
+    paras = [p.strip() for p in re.split(r"\n\s*\n", text) if len(p.strip()) > 40]
+    ptoks = [_content_tokens(p) for p in paras]
+    rows = []
+    for q in questions:
+        q = q.strip()
+        if not q:
+            continue
+        qt = _content_tokens(q)
+        best, best_i = 0.0, None
+        for i, pt in enumerate(ptoks):
+            cov = len(qt & pt) / len(qt) if qt else 0.0
+            if cov > best:
+                best, best_i = cov, i
+        covered = best >= threshold
+        row = {"question": q, "coverage": round(best, 2), "covered": covered,
+               "best_passage": (paras[best_i][:90] if best_i is not None else None)}
+        if covered:
+            row["passage_citable"] = passage_citability(paras[best_i])["citable"]
+        else:
+            have = ptoks[best_i] if best_i is not None else set()
+            row["missing_terms"] = sorted({w for w in re.findall(r"[a-z0-9]+", q.lower())
+                                           if w not in _STOP and len(w) > 1
+                                           and _stem(w) not in have})
+        rows.append(row)
+    n = len(rows)
+    covered = sum(1 for r in rows if r["covered"])
+    return {"questions": n, "covered": covered,
+            "coverage_pct": round(100 * covered / n) if n else None,
+            "threshold": threshold, "rows": rows,
+            "note": "lexical proxy: a covered question has a passage using its key terms; "
+                    "check the answer itself by hand"}
+
+
 # --- weighted GEO scorecard --------------------------------------------------
 
 def _grade(score):
@@ -255,7 +316,11 @@ def build_scorecard(report):
     llm_score = None
     if llm is not None:
         if llm.get("present"):
-            llm_score = 100 if llm.get("has_headings") else 60
+            if "validation" in llm:     # structure-validated (see llms_txt.py)
+                v = llm["validation"]
+                llm_score = v["score"] if v["ok"] else min(v["score"], 60)
+            else:
+                llm_score = 100 if llm.get("has_headings") else 60
         else:
             llm_score = 0
     cats.append({"name": "llms_txt", "available": llm is not None, "score": llm_score,
@@ -284,6 +349,9 @@ def main():
     ap.add_argument("--content", help="text/markdown/html file to score")
     ap.add_argument("--url", help="site URL (checks /llms.txt + robots AI policy)")
     ap.add_argument("--robots", help="local robots.txt file for an offline crawler-policy verdict")
+    ap.add_argument("--llms", help="local llms.txt file to validate offline")
+    ap.add_argument("--questions", help="file of AI Mode sub-questions (one per line) for "
+                                        "fan-out coverage against --content")
     ap.add_argument("--scorecard", action="store_true",
                     help="emit a weighted 0-100 GEO score with a per-category breakdown")
     ap.add_argument("--no-network", action="store_true")
@@ -309,6 +377,28 @@ def main():
             report["structured_data_blocks"] = ld
             report["citability"] = score_passages(text)
 
+    if args.questions:
+        try:
+            qs = open(args.questions, encoding="utf-8", errors="replace").read().splitlines()
+        except OSError as e:
+            report["errors"].append(f"could not read questions: {e}")
+            fatal = True
+            qs = []
+        if qs and args.content and raw:
+            report["fanout"] = fanout_coverage(text, qs)
+        elif qs:
+            report["errors"].append("--questions needs --content to check against")
+
+    if args.llms:
+        try:
+            ltext = open(args.llms, encoding="utf-8", errors="replace").read()
+            report["llms_txt"] = {"present": True, "source": "file",
+                                  "has_headings": bool(re.search(r"^#", ltext, re.M)),
+                                  "bytes": len(ltext), "validation": llms_txt.validate(ltext)}
+        except OSError as e:
+            report["errors"].append(f"could not read llms file: {e}")
+            fatal = True
+
     # A supplied robots.txt (offline) takes precedence and gives the AI-crawler verdict.
     if args.robots:
         try:
@@ -322,10 +412,12 @@ def main():
         if urlparse(args.url).scheme in ("http", "https"):
             p = urlparse(args.url)
             llms, err = fetch(f"{p.scheme}://{p.netloc}/llms.txt")
-            if llms:
+            if args.llms:
+                pass    # an explicitly supplied llms.txt file wins
+            elif llms:
                 report["llms_txt"] = {"present": True,
                                       "has_headings": bool(re.search(r"^#", llms, re.M)),
-                                      "bytes": len(llms)}
+                                      "bytes": len(llms), "validation": llms_txt.validate(llms)}
             else:
                 report["llms_txt"] = {"present": False, "note": "Add /llms.txt (Markdown) summarizing the site for LLMs."}
             if not args.robots:   # don't override an explicitly supplied robots file
@@ -357,7 +449,24 @@ def main():
         if report["structured_data_blocks"] is not None:
             emit(f"Structured data blocks: {report['structured_data_blocks']}")
         if report["llms_txt"] is not None:
-            emit(f"llms.txt: {report['llms_txt']}")
+            lt = report["llms_txt"]
+            if lt.get("validation"):
+                v = lt["validation"]
+                emit(f"llms.txt: {'valid' if v['ok'] else 'INVALID'} ({v['score']}/100, "
+                     f"{v['links']} links, {len(v['sections'])} sections)")
+                for x in v["issues"]:
+                    emit(f"  - [{x['severity']}] {x['finding']}")
+            else:
+                emit(f"llms.txt: {lt}")
+        fo = report.get("fanout")
+        if fo:
+            emit(f"Fan-out coverage: {fo['covered']}/{fo['questions']} sub-questions "
+                 f"answered ({fo['coverage_pct']}%)")
+            for r in fo["rows"]:
+                if r["covered"]:
+                    emit(f"  + {r['question']} ({int(r['coverage']*100)}%)")
+                else:
+                    emit(f"  - {r['question']} -- missing: {', '.join(r['missing_terms'][:6])}")
         if report["ai_crawler_policy"] is not None:
             pol = report["ai_crawler_policy"]
             emit(f"AI crawler policy: {pol.get('verdict', '?')} -- {pol.get('note', '')}")
