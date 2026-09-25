@@ -1,5 +1,35 @@
 # Release Notes
 
+## v1.9.0 — 2026-09-25 — design depth + a real qa-gate runner (loop cycle 9 of 10)
+
+**24 Core · 18 Lite · 3 routing.** `design-cro` and `design-motion` become Core, and the
+mandatory pre-delivery gate becomes one command.
+- **New `scripts/workflow/qa_gate.py`** — the static path of the 9-phase gate. Runs the
+  plugin's own engines (`a11y_static`, `tech_audit`, `image_audit`, `content_audit`,
+  `schema_gen`, `link_graph`) over every page of a build, adds an **exposed-secret scan**
+  (AWS / Stripe live / GitHub / Slack / private keys; Google keys flagged to verify
+  restriction) and **deployment checks** (staging `Disallow: /` left on, robots Sitemap
+  line, sitemap.xml, 404 page, favicon, analytics tag), functional checks (broken
+  internal links, `href="#"`, action-less forms, missing image files), merges repeats
+  across pages, applies the template's verdict rule (any critical ⇒ FAIL / NO), rates
+  risk, estimates fix hours, and renders `templates/qa-report-template.md`
+  (`--report`, `--as-of` for reproducible dates). Phases 2 and 8 are marked
+  `N/A — needs Playwright`, never faked.
+- **New `scripts/design/cro_audit.py`** — K1–K13 conversion heuristics (CTA presence +
+  hierarchy in the first screen, generic labels, form length and needlessly required
+  fields, trust signals and their proximity to the decision, tap-to-call, headline
+  clarity, value copy, autoplay, long-page CTA), ranked by impact ÷ effort and citing
+  the `data/ux-rules.csv` conversion rule each enforces.
+- **New `scripts/design/motion_audit.py`** — M1–M9: missing reduced-motion guard,
+  layout-property animation, `transition: all`, over-long UI motion, infinite
+  animations / autoplay video without a stop (WCAG 2.2.2), un-reset smooth scroll,
+  removed focus outlines without `:focus-visible` (WCAG 2.4.7), untokenized timing.
+- New references `references/design-cro/cro-heuristics.md`,
+  `references/design-motion/motion-rubric.md`; golden examples for qa-gate (FAIL /
+  Critical), design-cro (60/100), design-motion (60/100) — all pinned.
+- Gates: smoke 39/39 (new qa_gate golden-build check), 629 unit tests (+13 in
+  `tests/test_design_qa.py`), verify_release 56/56.
+
 ## v1.8.0 — 2026-09-25 — seo-hreflang + seo-ecommerce promoted to Core (loop cycle 8 of 10)
 
 **22 Core · 20 Lite · 3 routing.**

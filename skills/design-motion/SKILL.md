@@ -44,7 +44,14 @@ reduced-motion fallback every time.
 4. **Keep it performant** — animate `transform`/`opacity` only; avoid layout-
    thrashing properties; no animation on the LCP element's first paint.
 5. **Deliver code** ready to paste, plus a one-line note on where to place it.
-   Offer to run `design-accessibility` to confirm reduced-motion behavior.
+6. **Audit it** (and any existing motion layer) before handing off:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/design/motion_audit.py" --css styles.css --html page.html --human
+   ```
+   M1–M9 (`references/design-motion/motion-rubric.md`): missing reduced-motion guard,
+   layout-property animation, `transition: all`, over-long UI motion, infinite
+   animations and autoplay video without a stop, un-reset smooth scrolling, removed
+   focus outlines, untokenized timing. Ship only when M1 / M8 are clear.
 
 ## Outputs
 
@@ -54,8 +61,10 @@ reduced-motion fallback every time.
 
 ## Dependencies
 
-- None required (pure method). Composes with `design-dimensions` (spec source),
-  `design-system-gen` (motion tokens), `design-accessibility` (reduced-motion check).
+- `scripts/design/motion_audit.py` (required) — the M1–M9 motion audit
+- `references/design-motion/motion-rubric.md` (required) — guard snippet, timing tokens, codes
+- Composes with `design-dimensions` (spec source), `design-system-gen` (motion tokens),
+  `design-accessibility` (reduced-motion check).
 
 ## Notes
 

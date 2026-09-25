@@ -35,8 +35,8 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.8.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **22 Core,
-> 20 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
+> **Shipping status (v1.9.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **24 Core,
+> 18 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
 > APIs, smoke-tested). Core skills are 3-layer (earned references + real Agent-tool
 > fan-out); Lite skills are Stable single-file, deepened next in v1.1. Every skill
 > that can use an external tool is **tool-aware**: it uses a dedicated MCP/CLI when
@@ -65,21 +65,21 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.8.0) — 45 Stable, mostly free-tier
+## Shipping skills (v1.9.0) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
-**★ marks the 22 Core** skills (deepened this release — earned reference docs and/or a
-real parallel agent fan-out). The other 20 are **Lite** (Stable and single-file, slated
+**★ marks the 24 Core** skills (deepened this release — earned reference docs and/or a
+real parallel agent fan-out). The other 18 are **Lite** (Stable and single-file, slated
 for the same depth pass in v1.1), and 3 are **routing** helpers.
 
 **Design (10)**
 - ★ `design-system-gen` — generate a full design system: pattern, style, WCAG-safe palette, type pairing, effects.
 - `design-dimensions` — structure a design brief around 5 core dimensions (layout, style, color, type, motion).
-- `design-motion` — emit real CSS/JS motion (entrances, scroll, micro-interactions) from motion tokens.
+- ★ `design-motion` — motion code with a reduced-motion guard every time, plus a motion audit (layout-property animation, transition:all, infinite loops, removed focus rings).
 - `design-system-persist` — save a design system to disk so later sessions reuse it.
 - ★ `design-build` — generate distinctive, production-grade frontend UI from a design system.
 - `design-tokens-emit` — export a design system as CSS / Tailwind / SCSS / Style-Dictionary tokens.
-- `design-cro` — heuristic conversion review of a landing/funnel page (CTA, above-fold, forms, trust signals).
+- ★ `design-cro` — CRO heuristic engine (CTA hierarchy, form friction, trust proximity, tap-to-call, headline clarity) ranked by impact ÷ effort, citing the UX rule set.
 - ★ `design-accessibility` — audit HTML against WCAG 2.2 (alt text, heading order, labels, contrast, landmarks).
 - ★ `design-research` — competitive research on a site + its rivals → a scored intelligence report.
 - ★ `design-visual-qa` — screenshot baselines across viewports/browsers, then diff to catch rendering regressions.
@@ -129,7 +129,7 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 - `seo-backlinks` — backlink profile: referring domains, anchors, toxic flags, competitor gap.
 - `seo-image-gen` — generate SEO-ready images (OG, heroes, infographics, favicons) at correct dimensions.
 
-Backed by **38 scripts** — all standard-library-only Python; every one but the design
+Backed by **41 scripts** — all standard-library-only Python; every one but the design
 ranker library is also a runnable CLI.
 "Standard-library-only" means they use only what ships with Python, so there is
 **nothing to `pip install`**. They include the design engine + palette generator, page

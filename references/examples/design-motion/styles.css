@@ -1,0 +1,10 @@
+/* Cedar Bench Co. — motion layer as first drafted (fictional brand) */
+.card { transition: all 300ms ease-out; }
+.drawer { transition: height 250ms ease-in-out; }
+.hero-badge { animation: pulse 1.6s ease-in-out infinite; }
+.accordion__panel { transition: max-height 1200ms ease; }
+.btn:focus { outline: none; }
+html { scroll-behavior: smooth; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes slide-in { from { left: -100%; } to { left: 0; } }
+.toast { animation: slide-in 400ms ease-out; }

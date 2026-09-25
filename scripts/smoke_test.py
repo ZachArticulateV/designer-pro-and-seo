@@ -288,6 +288,19 @@ def main():
         check("llms_txt generate -> validate scores 100", llms_ok,
               "generated file validates clean" if llms_ok else "generator/validator disagree")
 
+        # qa_gate integration: the golden broken build must FAIL with a Critical risk
+        # (exercises a11y_static + tech_audit + image/content/schema audits + link_graph).
+        rq = subprocess.run(py() + [os.path.join(ROOT, "scripts", "workflow", "qa_gate.py"),
+             "--dir", os.path.join(ROOT, "references", "examples", "qa-gate", "build"),
+             "--base-url", "https://example.test"], capture_output=True, encoding="utf-8")
+        try:
+            qd = json.loads(rq.stdout)
+            qa_ok = (qd["status"], qd["risk"], qd["client_ready"]) == ("FAIL", "Critical", "NO")
+        except (json.JSONDecodeError, KeyError):
+            qa_ok = False
+        check("qa_gate fails the golden broken build (Critical, not client-ready)", qa_ok,
+              "gate blocks the broken build" if qa_ok else "gate verdict wrong")
+
     passed = sum(1 for _, ok, _ in results if ok)
     total = len(results)
     print(f"\n{passed}/{total} checks passed.")
