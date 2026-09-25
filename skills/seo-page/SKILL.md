@@ -1,6 +1,6 @@
 ---
 name: seo-page
-description: Single-URL SEO review — on-page elements, content quality, meta, schema, images, observable performance signals, and internal links in one pass (real Core Web Vitals field data when seo-google is connected). Lightweight alternative to seo-audit when only one page matters. Trigger when the user says "analyze this page", "check page SEO", "single URL", "check this page", "review this URL", or provides one specific URL.
+description: Single-URL SEO review — runs the technical audit and the content audit on one page (on-page elements, meta, E-E-A-T signals, readability, keyword placement, schema, images, lab performance risks, internal links) in one pass with two deterministic scores (real Core Web Vitals field data when seo-google is connected). Lightweight alternative to seo-audit when only one page matters. Trigger when the user says "analyze this page", "check page SEO", "single URL", "check this page", "review this URL", or provides one specific URL.
 ---
 
 # seo-page
@@ -32,12 +32,22 @@ APIs only add live ranking and field-performance context.
 
 1. **Fetch the page** (WebFetch, or `curl`-style retrieval of the raw HTML). For a
    local build, read the file directly.
-2. **On-page & meta** — check: one descriptive `<title>` (≤ ~60 chars), meta
-   description (~150–160 chars), exactly one `<h1>` and a logical heading order,
-   canonical tag, meta robots, and Open Graph / Twitter card tags.
-3. **Content quality** — word count vs topical depth, target-keyword presence in
-   title/H1/early body (without stuffing), readability, and whether the page
-   answers the likely search intent. (Hand to `seo-content` for deep E-E-A-T.)
+2. **On-page, meta & technical** — run the technical audit on the saved HTML (pass
+   `--url` for URL-structure checks):
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/tech_audit.py" --file page.html --url <URL> --no-network --human
+   ```
+   Title, meta description, one `<h1>`, canonical, meta robots / X-Robots-Tag, Open
+   Graph, viewport, lab CWV risks, JS-rendering and mixed content — each with a fix
+   (catalog: `references/seo-technical/check-catalog.md`).
+3. **Content quality** — run the content audit with the target keyword:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/content_audit.py" --file page.html --url <URL> --keyword "<target>" --type <article|product|local|home|category> --human
+   ```
+   E-E-A-T signals (YMYL-aware), heading order, readability, depth for the page type,
+   keyword placement / stuffing, in-content internal links and anchors, scaled-content
+   tells, passage citability (rubric: `references/seo-content/content-rubric.md`).
+   Then judge intent match by hand; hand deep E-E-A-T work to `seo-content`.
 4. **Schema** — detect JSON-LD; validate type appropriateness and required
    properties; flag rich-result eligibility. (Delegate deeper work to `seo-schema`.)
 5. **Images** — alt text presence/quality, dimensions declared (CLS), modern
@@ -45,8 +55,8 @@ APIs only add live ranking and field-performance context.
 6. **Performance** — note render-blocking resources and obvious payload issues.
    If `seo-google` (PageSpeed/CrUX) is available, pull real LCP/CLS/INP; otherwise
    report observable issues and say field data needs `seo-google`.
-7. **Internal links** — count, descriptive anchor text, and whether the page links
-   to/within relevant site sections.
+7. **Internal links** — the content audit counts in-content internal links and flags
+   generic anchors; judge whether they point at the right hub and next step.
 8. **Optional enrichment** — if the DataForSEO extension is configured, add live
    ranking/keyword context; otherwise state, in one line, what it would add.
 9. **Render a compact report** — findings grouped Critical / High / Medium / Low,
@@ -55,11 +65,14 @@ APIs only add live ranking and field-performance context.
 ## Outputs
 
 - Page-level findings grouped by priority, each with a concrete fix
+- Two deterministic scores — technical (lab) and content — plus the combined view
 - A short "what paid data would add" note when running the free path
 
 ## Dependencies
 
-- None required — the free path uses page fetch + parsing only
+- `scripts/seo/tech_audit.py` (required) — technical / on-page / lab-CWV checks
+- `scripts/seo/content_audit.py` (required) — content quality, E-E-A-T signals, links
+- `references/seo-content/content-rubric.md` (required) — content thresholds + scoring
 - Optional: `seo-schema` (deep schema), `seo-content` (deep E-E-A-T),
   `seo-google` (real CWV/field data), DataForSEO extension (ranking context)
 

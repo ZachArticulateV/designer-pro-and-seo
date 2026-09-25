@@ -1,5 +1,31 @@
 # Release Notes
 
+## v1.5.0 — 2026-09-25 — seo-page + seo-content promoted to Core (loop cycle 5 of 10)
+
+**18 Core · 24 Lite · 3 routing.** Both skills now run a real, deterministic engine
+instead of a by-hand checklist.
+- **New `scripts/seo/content_audit.py`** — HTML / Markdown / text in; eight dimensions
+  out, each finding with a fix, plus a 0-100 content score:
+  E-E-A-T observable signals (author via meta / schema / `rel=author` / byline,
+  credentials or expert review — **required on YMYL pages, auto-detected**, publish /
+  updated dates, staleness with `--as-of`, statistics without an outbound source,
+  first-hand markers, About/Contact), structure (H1, heading skips, H2 on long pages),
+  readability (sentence length, long sentences, walls of text, Flesch), depth floors per
+  page type (article / product / local / home / category), keyword placement + stuffing,
+  in-content internal links (nav/footer excluded) + generic anchors, and the
+  scaled-content tells — **leaked template placeholders (critical)**, filler phrasing,
+  duplicated sentences — plus passage citability via `geo_check`. Never labeled
+  "AI-written"; never presented as Google's E-E-A-T score. `--url` fetches through the
+  shared SSRF guard.
+- `seo-page` now runs `tech_audit.py` + `content_audit.py` (two scores); its agent moves
+  from WebFetch to the bundled SSRF-guarded fetchers (least privilege preserved).
+  `seo-content` runs the audit, then judges what a script can't (claim accuracy,
+  relevance of credentials, intent fit). Agent contracts report the real score.
+- New `references/seo-content/content-rubric.md`; golden example
+  `references/examples/seo-content/` (a YMYL article, 13/100, pinned).
+- Gates: smoke 38/38, 575 unit tests (+16 in `tests/test_content_audit.py`),
+  verify_release 56/56.
+
 ## v1.4.0 — 2026-09-25 — AI-search visibility depth (loop cycle 4 of 10)
 
 Access → coverage → extractability: the three things that decide whether an AI answer
