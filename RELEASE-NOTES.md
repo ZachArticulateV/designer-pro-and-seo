@@ -1,5 +1,26 @@
 # Release Notes
 
+## v1.7.0 — 2026-09-25 — seo-image-audit promoted to Core (loop cycle 7 of 10)
+
+**20 Core · 22 Lite · 3 routing.** Image SEO moves from a by-hand checklist to an engine.
+- **New `scripts/seo/image_audit.py`** — per-finding-type audit listing the affected
+  images: alt quality (missing, decorative without `alt=""`, **linked image with empty
+  alt = nameless link**, file name as alt, "image of…", > 125 chars, keyword-stuffed,
+  reused), legacy formats without a WebP/AVIF alternative (`<picture>` / srcset aware),
+  `srcset` missing or without `sizes`, LCP loading (lazy hero, several / no
+  `fetchpriority=high`, below-fold not lazy), CLS dimensions, camera/hash file names,
+  and `og:image`. With `--assets` it reads **real bytes and intrinsic pixels from the
+  image headers** (PNG, GIF, JPEG, WebP VP8/VP8L/VP8X, AVIF — pure stdlib, traversal
+  guarded) for byte budgets, oversize and aspect-mismatch checks; without it those land
+  in `needs_data` instead of being guessed. Emits `cwebp` / `avifenc` / `magick`
+  commands; never converts files. Score 0-100.
+- The `seo-image-audit` agent moves from WebFetch to the bundled SSRF-guarded fetcher
+  (least privilege preserved) and now reports a real score.
+- New `references/seo-image-audit/image-rubric.md`; golden example
+  `references/examples/seo-image-audit/` with generated PNG assets (48/100, pinned).
+- Gates: smoke 38/38, 601 unit tests (+12 in `tests/test_image_audit.py`),
+  verify_release 56/56.
+
 ## v1.6.0 — 2026-09-25 — seo-sitemap promoted to Core + internal-link graph (loop cycle 6 of 10)
 
 **19 Core · 23 Lite · 3 routing.** The "live quality gates" step that used to be manual

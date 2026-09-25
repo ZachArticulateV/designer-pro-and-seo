@@ -1,6 +1,6 @@
 ---
 name: seo-image-audit
-description: Audit a page's images for SEO and performance — alt text, file size, modern formats (WebP/AVIF), responsive srcset, lazy loading, and CLS-safe dimensions, plus ready-to-run conversion commands. Uses DataForSEO for live image-SERP rankings when connected; otherwise audits from page fetch and parsing alone. Trigger when the user says "image seo", "image audit", "alt text", "image optimization", "convert to webp", "convert to avif", or "image performance".
+description: Audit a page's images for SEO and performance — alt-text quality (missing, linked-empty, filename, stuffed, reused), modern formats (WebP/AVIF), responsive srcset/sizes, LCP loading (lazy hero, fetchpriority), CLS-safe dimensions, real byte and pixel budgets read from the image files, and og:image — scored, with ready-to-run conversion commands. Uses DataForSEO for live image-SERP rankings when connected; otherwise audits from page fetch and parsing alone. Trigger when the user says "image seo", "image audit", "alt text", "image optimization", "convert to webp", "convert to avif", or "image performance".
 ---
 
 # seo-image-audit
@@ -29,33 +29,44 @@ the whole product; DataForSEO only adds live image-SERP context.
 
 ## Steps
 
-1. **Inventory images** — fetch the page (or scan the directory) and list every
-   image with its `src`, dimensions, format, and file size.
-2. **Score each image:**
-   - **Alt text** — present? descriptive? keyword-relevant without stuffing?
-     (decorative images should have empty `alt=""`).
-   - **Format** — modern (WebP/AVIF) vs legacy (JPEG/PNG); flag conversion wins.
-   - **File size / dimensions** — oversized for display size? recommend target.
-   - **Responsive** — `srcset`/`sizes`/`<picture>` present where useful?
-   - **Lazy loading** — `loading="lazy"` below the fold; eager for the LCP image.
-   - **CLS** — width/height or aspect-ratio declared to reserve space?
+1. **Run the image audit** — on a live page (fetched through the shared SSRF guard) or
+   a local build, where `--assets` lets it read real file bytes and pixel dimensions
+   from the image headers:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/image_audit.py" --url <URL> --human
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/image_audit.py" --file page.html --url <URL> --assets dist/ --human
+   ```
+   Findings by type, each listing the affected images (codes, budgets and scoring:
+   `references/seo-image-audit/image-rubric.md`):
+   - **Alt** — missing, empty on a linked image (the link loses its name), file name
+     as alt, "image of…", over-long, keyword-stuffed, reused across images.
+   - **Format** — legacy JPEG/PNG/GIF with no WebP/AVIF alternative.
+   - **Responsive** — no `srcset`/`<picture>`; `srcset` without `sizes`.
+   - **Loading** — lazy-loaded hero (LCP), several or no `fetchpriority=high`,
+     below-the-fold images not lazy.
+   - **CLS** — no width+height or `aspect-ratio`.
+   - **Size** (`--assets`) — over 500 KB, over the 200 KB hero / 250 KB budget,
+     intrinsic pixels > 2.5× the declared width, declared ratio ≠ file ratio. Without
+     `--assets` these are listed under `needs_data`, never guessed.
+   - **Filename / social** — camera or hash file names; missing or relative `og:image`.
+2. **Judge alt text in context** — the script catches the mechanical failures; read the
+   remaining alts against what each image shows on *this* page.
 3. **Optional enrichment** — if the DataForSEO extension is configured, add image
    SERP rankings; otherwise state, in one line, what it would add.
-4. **Render findings** grouped Critical / High / Medium / Low, each with a concrete
-   fix and (for format/size) the recommended target. For "convert to webp/avif"
-   requests, output ready-to-run conversion commands per image (`cwebp`, ImageMagick
-   `magick`, or a Sharp snippet) as the actionable deliverable — running them needs
-   that tool installed (see Notes).
+4. **Deliver** the findings with fixes, the biggest byte/pixel wins first, and the
+   emitted `conversions` (ready-to-run `cwebp` / `avifenc` / ImageMagick commands per
+   legacy image) — the script prints them; running them needs those tools installed.
 
 ## Outputs
 
-- Per-image findings table with prioritized fixes
+- Findings by type with affected images, fixes, and a 0-100 score
 - A summary of the biggest performance wins (format + size)
 - A short "what paid data would add" note on the free path
 
 ## Dependencies
 
-- None required — the free path uses page fetch + parsing
+- `scripts/seo/image_audit.py` (required) — the image audit (stdlib header parsing)
+- `references/seo-image-audit/image-rubric.md` (required) — codes, budgets, scoring
 - Optional: DataForSEO extension (image SERP); `seo-page` (page-level context)
 
 ## Notes
