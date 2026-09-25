@@ -162,6 +162,7 @@ def main(argv=None):
     ap.add_argument("--file", help="local HTML file")
     ap.add_argument("--url", help="page URL (fetched through the shared SSRF guard)")
     ap.add_argument("--no-network", action="store_true")
+    ap.add_argument("--robots", help="robots.txt file: also snapshot the AI-crawler verdict (rule D15)")
     ap.add_argument("--db", help="SQLite store path (default: <cwd>/.seo-drift/baselines.db; "
                                  "refuses to default inside the plugin root)")
     ap.add_argument("--label", help="optional label for this snapshot (e.g. 'prod', 'pre-deploy')")
@@ -181,7 +182,15 @@ def main(argv=None):
         print(json.dumps({"error": err}))
         return 1
 
-    snapshot = drift_tools.capture(html, args.url)
+    robots = None
+    if args.robots:
+        try:
+            with open(args.robots, encoding="utf-8", errors="replace") as fh:
+                robots = fh.read()
+        except OSError as e:
+            print(json.dumps({"error": "could not read --robots %s: %s" % (args.robots, e)}))
+            return 1
+    snapshot = drift_tools.capture(html, args.url, robots)
     captured_at = args.captured_at or _now_iso()
     try:
         conn = connect(db_path, create=True)

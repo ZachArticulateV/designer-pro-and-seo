@@ -32,9 +32,19 @@ reports; remediation happens in the appropriate skills.
 ## Steps
 
 1. **Load the report template** `templates/qa-report-template.md`.
-2. **Detect tooling.** Check whether the Playwright extension is available
-   (see `extensions/playwright/`). If yes, use it for live phases; if no, run the
-   static path and mark live-only checks `N/A — needs Playwright`.
+2. **Run the static gate in one command** — it drives the plugin's own engines
+   (`a11y_static`, `tech_audit`, `image_audit`, `content_audit`, `schema_gen`,
+   `link_graph`) over every page of the build, adds the exposed-secret scan and the
+   deployment checks (staging `Disallow: /` left on, robots/sitemap/404/favicon,
+   analytics), merges repeats across pages, applies the verdict rule, and fills the
+   template:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workflow/qa_gate.py" --dir dist/ --base-url https://client.example --project "<client>" --report
+   ```
+   (`--file page.html --url <URL>` for a single page; JSON without `--report`.)
+   Then **detect tooling**: if the Playwright extension is available (see
+   `extensions/playwright/`), deepen the live phases below; if not, the static report
+   already marks them `N/A — needs Playwright`.
 3. **Run the 9 phases**, recording PASS / WARN / FAIL / N/A for each:
    1. **Functional** — forms submit, links resolve, no console JS errors.
    2. **Visual fidelity** — matches the design system; responsive at 375/768/1280;
@@ -71,6 +81,8 @@ an explicit client-ready YES/NO.
 ## Dependencies
 
 - `templates/qa-report-template.md` (required)
+- `scripts/workflow/qa_gate.py` (required) — the static 9-phase runner (imports the SEO,
+  content, image, schema, link-graph and a11y engines)
 - `design-accessibility` (optional — adds axe/WCAG delegation; free path: static contrast/alt/heading/label/focus checks) — phase 3
 - `seo-page` (optional — adds full on-page SEO pass; free path: inline title/meta/OG/canonical check) — phase 7
 - `seo-google` (optional — adds PSI/CrUX field data; free path: flag CWV for field verification) — phase 4

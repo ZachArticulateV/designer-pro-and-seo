@@ -259,6 +259,62 @@ def main():
         check("tech_audit errors on bad input (missing file / bad URL scheme)", err_ok,
               "exit 1 + error on both" if err_ok else "silently returned exit 0 on bad input")
 
+        # ai_crawlers: the generated "citable, no training" robots block must round-trip
+        # to the best-practice verdict through the shared RFC 9309 evaluator.
+        rgen = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "ai_crawlers.py"),
+             "--generate", "citable-no-training"], capture_output=True, encoding="utf-8")
+        rp = os.path.join(td, "robots.txt")
+        open(rp, "w", encoding="utf-8").write(rgen.stdout)
+        rv = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "ai_crawlers.py"),
+             "--robots", rp], capture_output=True, encoding="utf-8")
+        try:
+            ai_ok = json.loads(rv.stdout).get("verdict") == "citable-training-blocked"
+        except json.JSONDecodeError:
+            ai_ok = False
+        check("ai_crawlers generate -> judge round-trips to citable-training-blocked", ai_ok,
+              "generated policy judged best-practice" if ai_ok else "round-trip verdict mismatch")
+
+        # llms_txt: a generated llms.txt must validate clean (generator + validator agree)
+        lu = os.path.join(td, "urls.txt")
+        open(lu, "w", encoding="utf-8").write("https://s.com/\nhttps://s.com/docs/start\n")
+        lo = os.path.join(td, "llms.txt")
+        rl = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "llms_txt.py"),
+             "--from-urls", lu, "--name", "S", "--summary", "A site.", "--out", lo],
+             capture_output=True, encoding="utf-8")
+        try:
+            llms_ok = rl.returncode == 0 and json.loads(rl.stdout)["validation"]["score"] == 100
+        except (json.JSONDecodeError, KeyError):
+            llms_ok = False
+        check("llms_txt generate -> validate scores 100", llms_ok,
+              "generated file validates clean" if llms_ok else "generator/validator disagree")
+
+        # qa_gate integration: the golden broken build must FAIL with a Critical risk
+        # (exercises a11y_static + tech_audit + image/content/schema audits + link_graph).
+        rq = subprocess.run(py() + [os.path.join(ROOT, "scripts", "workflow", "qa_gate.py"),
+             "--dir", os.path.join(ROOT, "references", "examples", "qa-gate", "build"),
+             "--base-url", "https://example.test"], capture_output=True, encoding="utf-8")
+        try:
+            qd = json.loads(rq.stdout)
+            qa_ok = (qd["status"], qd["risk"], qd["client_ready"]) == ("FAIL", "Critical", "NO")
+        except (json.JSONDecodeError, KeyError):
+            qa_ok = False
+        check("qa_gate fails the golden broken build (Critical, not client-ready)", qa_ok,
+              "gate blocks the broken build" if qa_ok else "gate verdict wrong")
+
+        # site_audit: the one-command SEO run must score a build and stay honest about scope
+        rs = subprocess.run(py() + [os.path.join(ROOT, "scripts", "workflow", "site_audit.py"),
+             "--dir", os.path.join(ROOT, "references", "examples", "seo-sitemap", "site"),
+             "--base-url", "https://example.test", "--as-of", "2026-09-25"],
+             capture_output=True, encoding="utf-8")
+        try:
+            sd = json.loads(rs.stdout)
+            sa_ok = (0 <= sd["health"]["overall_score"] <= 100 and "seo-google" in sd["not_covered"]
+                     and bool(sd["fixes"]))
+        except (json.JSONDecodeError, KeyError, TypeError):
+            sa_ok = False
+        check("site_audit scores a build and lists what it did not cover", sa_ok,
+              "health score + not-covered list" if sa_ok else "site_audit output wrong")
+
     passed = sum(1 for _, ok, _ in results if ok)
     total = len(results)
     print(f"\n{passed}/{total} checks passed.")

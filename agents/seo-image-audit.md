@@ -3,7 +3,7 @@ name: seo-image-audit
 description: Dispatched leaf for image SEO — fetches a page (or scans a local build) and scores every image on alt text, file size, modern formats, responsive srcset, lazy loading, and CLS-safe dimensions, returning prioritized fixes plus ready-to-run conversion commands. Fanned out as an always-on image specialist by the SEO audit orchestrator; wraps the seo-image-audit skill method with no forked logic.
 model: sonnet
 maxTurns: 12
-tools: Read, Glob, Grep, WebFetch
+tools: Read, Glob, Grep, Bash
 ---
 
 # seo-image-audit  (dispatched-leaf agent)
@@ -15,24 +15,24 @@ tools: Read, Glob, Grep, WebFetch
      leaf dispatches nothing (no Task tool) and never names its orchestrator as a
      dependency. seo-page (page context) and seo-image-gen (the generation half) are
      prose cross-references, not edges. -->
-<!-- Least privilege (C5): this method inventories images by fetching the page INLINE
-     via WebFetch, or by scanning a local build with Glob/Read/Grep — there is no
-     bundled script, so Bash is NOT granted (a fetch tool + Bash together is a hard
-     failure). The conversion commands (cwebp / magick / Sharp) are EMITTED as text
-     for the user to run; this agent never executes them and writes no file, so
-     neither Bash nor Write is granted. Nothing else. -->
+<!-- Least privilege (C5): Bash runs the bundled image_audit.py, which performs the
+     page fetch itself through the shared SSRF guard (net_safety.safe_open), so NO
+     WebFetch/WebSearch is granted (a fetch tool + Bash together is a hard failure).
+     Glob/Read/Grep locate a local build. The conversion commands (cwebp / avifenc /
+     magick) are EMITTED as text for the user to run; the script never converts or
+     writes images and this agent writes no file, so Write is NOT granted. -->
 
 **Wraps:** `skills/seo-image-audit/SKILL.md` — same method, no forked logic.
 
 ## Method
 
 The audit half of image SEO: inventory a page's images and score each on the
-dimensions that affect search and performance. Fetch the page with WebFetch — or scan
-a local build/image directory with Glob/Read/Grep — and list every image with its
-`src`, dimensions, format, and file size.
+dimensions that affect search and performance, via the bundled script (codes, budgets
+and scoring: `references/seo-image-audit/image-rubric.md`):
 
 ```
-WebFetch <URL>            # inventory images inline; for a local build, Glob/Read the directory instead
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/image_audit.py" --url <URL> --human                            # SSRF-guarded fetch
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/image_audit.py" --file page.html --url <URL> --assets dist/ --human  # local build: real bytes + pixels
 ```
 
 Score each image on: **alt text** (present, descriptive, keyword-relevant without
@@ -55,8 +55,8 @@ It adapts to what's available and never fails — the built-in Tier 2 is the pro
 
 1. **Tier 1 — DataForSEO extension.** If the DataForSEO MCP is exposed, add live
    image-SERP rankings for the page's images.
-2. **Tier 2 — built-in (the default).** Otherwise fetch/scan and score every image on
-   alt, format, size, responsive, lazy-loading, and CLS, with ready-to-run conversion
+2. **Tier 2 — built-in (the default).** Otherwise run `image_audit.py` to score every image on
+   alt, format, size, responsive, loading, and CLS, with ready-to-run conversion
    commands. A complete image audit, zero spend.
 3. **Tier 3 — n/a.** No local CLI deepens this capability (`none`).
 4. **Tier 4 — guided.** Offline? Scan a local build directory and deliver the same
@@ -70,7 +70,7 @@ are never fabricated — emit the audit + the `needs_tier1` note instead.
 capability:   serp-keywords
 tier1:        DataForSEO extension (image SERP)
 tier1_signal: DATAFORSEO_USERNAME | DATAFORSEO_PASSWORD
-tier2:        built-in WebFetch/local scan + per-image scoring (alt/format/size/responsive/lazy/CLS) with cwebp/magick/Sharp conversion commands
+tier2:        scripts/seo/image_audit.py (alt/format/responsive/loading/CLS/size/social findings + score + cwebp/avifenc/magick commands; --assets reads real bytes + pixels)
 tier2_yields: per-image findings table with prioritized fixes + biggest format/size wins, zero spend
 tier3:        none
 tier3_signal: none
@@ -89,9 +89,9 @@ agent:        seo-image-audit
 status:       ok | partial | error
 tier_ran:     1 | 2 | 4
 target:       <url or local build/directory audited>
-findings:     <JSON array of {src, dimension, severity, finding, fix}; dimension in alt|format|size|responsive|lazy|cls; severity in critical|high|medium|low>
+findings:     <JSON array of {src, dimension, severity, finding, fix}; dimension in alt|format|size|responsive|loading|cls|filename|social; severity in critical|high|medium|info>
 conversions:  <JSON array of ready-to-run commands {src, command}, or []>
-score:        null
+score:        <0-100 from image_audit.py `score`>
 needs_tier1:  image SERP rankings | none
 handoffs:     seo-page (page context), seo-image-gen (generation half) | none
 tier_line:    <one sentence: which tier ran + what a higher tier would add>
