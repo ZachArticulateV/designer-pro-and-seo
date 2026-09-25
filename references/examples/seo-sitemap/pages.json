@@ -1,0 +1,6 @@
+[
+  {"url": "https://example.test/", "status": 200, "noindex": false, "canonical": "https://example.test/"},
+  {"url": "https://example.test/benches", "status": 200, "noindex": false, "canonical": "https://example.test/benches/classic"},
+  {"url": "https://example.test/care-guide", "status": 301, "final_url": "https://example.test/guides/cedar-care"},
+  {"url": "https://example.test/guides/cedar-care", "status": 200, "noindex": false}
+]

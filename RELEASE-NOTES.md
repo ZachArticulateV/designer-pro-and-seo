@@ -1,5 +1,28 @@
 # Release Notes
 
+## v1.6.0 — 2026-09-25 — seo-sitemap promoted to Core + internal-link graph (loop cycle 6 of 10)
+
+**19 Core · 23 Lite · 3 routing.** The "live quality gates" step that used to be manual
+is now a script, and internal linking gets its own engine.
+- **`sitemap_tools.py`**: `.xml.gz` support; host / scheme / duplicate / fragment /
+  tracking-parameter hygiene; **lastmod honesty** (W3C format, future dates with
+  `--as-of`, >90% identical = auto-bumped); changefreq/priority flagged as ignored;
+  image / video / news (1,000 cap, 2-day freshness) / hreflang `xhtml:link` (absolute,
+  self + return links) extension checks; codes S01–S26 with a score. New
+  **`--crosscheck`** quality gates against page states (G1 4xx/5xx, G2 redirect, G3
+  noindex, G4 canonical-elsewhere, G5 indexable page missing) and **`--check-live`**
+  (SSRF-guarded sample fetch that states "fetched N of M"). `--generate` dedupes,
+  accepts real per-URL dates via `--lastmod-file`, and warns on a blanket `--lastmod`.
+- **New `scripts/seo/link_graph.py`** — internal-link graph from a static build
+  (`--dir`) or a crawler export (`--edges`): orphans, islands unreachable from home,
+  BFS click depth (> 3 flagged), broken internal targets (downgraded to info when the
+  page set is incomplete), dead ends, nav/footer-only pages, generic-anchor-only pages,
+  internal nofollow, sitemap parity. Codes L0–L10 with a score.
+- New `references/seo-sitemap/gates-and-architecture.md`; the golden example gains a
+  9-page static site + `pages.json` (gates 82/100, link graph 64/100 — pinned).
+- Gates: smoke 38/38, 589 unit tests (+14 in `tests/test_sitemap_linkgraph.py`),
+  verify_release 56/56.
+
 ## v1.5.0 — 2026-09-25 — seo-page + seo-content promoted to Core (loop cycle 5 of 10)
 
 **18 Core · 24 Lite · 3 routing.** Both skills now run a real, deterministic engine
