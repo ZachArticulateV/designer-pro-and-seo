@@ -1,5 +1,28 @@
 # Release Notes
 
+## v1.2.0 — 2026-09-25 — seo-technical promoted to Core (loop cycle 2 of 10)
+
+`seo-technical` becomes a real 3-layer Core skill (**15 Core · 27 Lite · 3 routing**).
+- **`tech_audit.py` rewritten on `html.parser`** into a 10-dimension audit where every
+  finding is a `{dimension, severity, finding, fix}` record, plus a deterministic
+  **lab score** (100 − 25/critical − 10/high − 4/medium over observed signals only; field
+  CWV stays `needs_tier1`). The `seo-technical` agent now returns that score instead of
+  `null`, so the audit orchestrator can weight it.
+- New checks: `X-Robots-Tag` / `googlebot` noindex, noindex+canonical conflict,
+  nosnippet (AI Overview opt-out), multiple / relative / cross-host canonicals,
+  **Googlebot's 2 MB uncompressed index limit**, doctype, charset, hreflang x-default,
+  zoom-disabled viewport, JSON-LD parse errors + retired rich-result types (from
+  `schema_gen.SPEC`), render-blocking head scripts, lazy-loaded LCP image, missing
+  image dimensions (CLS), oversized inline JSON, client-rendered shell and JS-only
+  links, Open Graph completeness, URL structure (case, params, session ids), redirect
+  hops.
+- **Bug fix:** a plain `<a href="http://…">` was reported as HIGH mixed content; only
+  `http://` sub-resources are mixed content now (links are info).
+- New `references/seo-technical/check-catalog.md` (checks, severity rationale, score
+  formula, worked example); richer golden example (scores 64/100, pinned by test).
+- Gates: smoke 37/37, 524 unit tests (+24 in `tests/test_tech_audit.py`),
+  verify_release 56/56.
+
 ## v1.1.0 — 2026-09-25 — 2026 search currency (loop cycle 1 of 10)
 
 First cycle of the "gold standard" pass: make every SEO fact current as of

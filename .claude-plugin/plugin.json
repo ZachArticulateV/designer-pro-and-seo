@@ -1,7 +1,7 @@
 {
   "name": "designer-pro-and-seo",
-  "version": "1.1.0",
-  "description": "45 Stable skills (14 Core, 28 Lite, 3 routing) for web design + SEO in Claude Code: design systems, on-brand page rendering, design tokens, build briefs, pre-delivery QA, and CMS porting, plus a full SEO suite (technical, schema, sitemap, content, GEO, hreflang, drift, local, e-commerce) with a real parallel-dispatch audit. Free-first and tool-aware (built-in web/browser by default, dedicated MCP/CLI when present). Free and MIT-licensed.",
+  "version": "1.2.0",
+  "description": "45 Stable skills (15 Core, 27 Lite, 3 routing) for web design + SEO in Claude Code: design systems, on-brand page rendering, design tokens, build briefs, pre-delivery QA, and CMS porting, plus a full SEO suite (technical, schema, sitemap, content, GEO, hreflang, drift, local, e-commerce) with a real parallel-dispatch audit. Free-first and tool-aware (built-in web/browser by default, dedicated MCP/CLI when present). Free and MIT-licensed.",
   "author": {
     "name": "Zachary W.",
     "url": "https://articulatevision.com"

@@ -1,6 +1,6 @@
 ---
 name: seo-technical
-description: 9-category technical SEO audit — crawlability, indexability, security headers, URL structure, mobile, Core Web Vitals (LCP/CLS/INP), structured data, JavaScript rendering, and IndexNow/AI-crawler policy. Trigger when the user says "technical seo", "crawl issues", "robots.txt", "core web vitals", "site speed", "security headers", "indexability", "javascript seo", or "indexnow".
+description: 10-dimension technical SEO audit with a fix per finding and a deterministic lab score — crawlability (RFC 9309 AI-crawler policy, redirects), indexability (noindex / X-Robots-Tag, canonical conflicts, the 2 MB Googlebot index limit), security (true mixed content, headers), URL structure, mobile, Core Web Vitals lab risks (lazy LCP image, render-blocking scripts, CLS), structured data, JavaScript rendering (client-rendered shells), and SERP presentation. Trigger when the user says "technical seo", "crawl issues", "robots.txt", "core web vitals", "site speed", "security headers", "indexability", "javascript seo", or "indexnow".
 ---
 
 # seo-technical
@@ -10,9 +10,12 @@ description: 9-category technical SEO audit — crawlability, indexability, secu
 
 ## Purpose
 
-The technical spine of SEO. Runs scriptable on-page/technical checks on a URL (or
-local HTML) and interprets them across 9 dimensions, deferring real field metrics
-to `seo-google` and deep structured-data work to `seo-schema`.
+The technical spine of SEO. Runs scriptable technical checks on a URL (or local HTML)
+across 10 dimensions, attaches a concrete fix to every finding, and computes a
+deterministic 0-100 **lab score** the audit orchestrator can weight — deferring real
+field metrics to `seo-google` and deep structured-data work to `seo-schema`. The full
+check catalog, severity rationale and score formula are in
+`references/seo-technical/check-catalog.md`.
 
 Current standards it encodes: **Core Web Vitals targets LCP < 2.5s, CLS < 0.1,
 INP < 200ms** (INP, not FID, is the metric — and the most-failed one); the 2026
@@ -44,13 +47,20 @@ retirements, crawler classes) come from `references/shared/search-landscape-2026
    ```
    python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/tech_audit.py" --url <URL> --human     # or --file page.html
    ```
-   It checks title/meta, h1, canonical, meta-robots noindex, viewport, lang,
-   structured-data presence, image alt coverage, mixed content, and — when it can
-   fetch — security headers and the robots.txt AI-crawler policy.
-2. **Interpret across the 9 dimensions:** crawlability (robots/sitemap),
-   indexability (meta robots/canonical/noindex), security (HTTPS/HSTS/CSP/mixed
-   content), URL structure, mobile (viewport/tap targets), CWV, structured data,
-   JS rendering (is content visible without JS?), IndexNow/AI-crawler policy.
+   Pass `--url` alongside `--file` to add URL-structure checks without fetching.
+   Every finding is a `{dimension, severity, finding, fix}` record; the JSON also
+   carries `score` (lab), per-dimension counts, and `needs_tier1`.
+2. **Interpret across the 10 dimensions** (catalog:
+   `references/seo-technical/check-catalog.md`): crawlability (AI-crawler policy via
+   the shared `scripts/seo/ai_crawlers.py`, Sitemap directive, redirect hops),
+   indexability (noindex incl. the `X-Robots-Tag` header, nosnippet, canonical
+   missing / conflicting / relative / cross-host / noindex-conflict, 2 MB index limit,
+   doctype, charset, lang, hreflang), security (HTTPS, true mixed content, headers),
+   URL structure, mobile (viewport, zoom), CWV lab risks, structured data (presence,
+   parse errors, retired types), JS rendering (client-rendered shell, JS-only links),
+   SERP presentation (title, description, h1, Open Graph, alt), plus IndexNow
+   guidance. Lead with criticals: a noindex, a blocked Googlebot, or a shell page
+   outranks every medium.
 3. **Core Web Vitals:** the script emits the targets and flags that synthetic
    tools can't measure field CWV — if the user has Google access, pull real
    CrUX/PSI data via `seo-google`; otherwise report observable risks only.
@@ -68,7 +78,7 @@ This skill follows the plugin's capability-tier cascade
    dimension; a connected Firecrawl MCP can additionally JS-render shells for the
    "visible without JS?" check.
 2. **Tier 2 — built-in (the default).** Otherwise `tech_audit.py` runs the full
-   9-category lab audit offline (`--file` / `--no-network`) and emits the CWV
+   10-dimension lab audit offline (`--file` / `--no-network`) and emits the CWV
    targets — a complete, prioritized technical report on its own, no key, no
    network. This is the product.
 3. **Tier 4 — guided.** If nothing is connected, deliver the lab audit and name the
@@ -78,7 +88,7 @@ This skill follows the plugin's capability-tier cascade
 capability:   cwv-field
 tier1:        Google PSI / CrUX (free key) via seo-google
 tier1_signal: CRUX_API_KEY | GOOGLE_API_KEY
-tier2:        tech_audit.py (9-category lab audit + LCP<2.5 / CLS<0.1 / INP<200 targets, no key)
+tier2:        tech_audit.py (10-dimension lab audit + lab score + LCP<2.5 / CLS<0.1 / INP<200 targets, no key)
 tier2_yields: prioritized per-dimension technical findings with concrete fixes, zero spend
 tier3:        none
 tier3_signal: none
@@ -90,13 +100,17 @@ Always end by stating which tier ran and what field data a higher tier would add
 
 ## Outputs
 
-- Per-dimension findings with prioritized fixes (script JSON or `--human` text)
+- Per-dimension findings, each with a fix (script JSON or `--human` text)
+- A deterministic lab score (0-100) with its basis stated, never a field-CWV number
 - Cross-references to `seo-google` (field CWV) and `seo-schema` (structured data)
 - An explicit AI-crawler policy recommendation for robots.txt
 
 ## Dependencies
 
 - `scripts/seo/tech_audit.py` (required) — Python 3.10+, standard library only
+- `scripts/seo/ai_crawlers.py` (required, imported) — shared RFC 9309 AI-crawler evaluator
+- `references/seo-technical/check-catalog.md` (required) — checks, severities, score
+- `references/shared/search-landscape-2026.md` (required) — dated facts the checks encode
 - `seo-google` (optional — real CWV field data), `seo-schema` (deep structured data)
 
 ## Notes

@@ -24,7 +24,7 @@ conditional: seo-content, seo-geo, seo-local-unified, seo-ecommerce, seo-google,
 | Agent | Covers | Why always |
 |---|---|---|
 | `seo-page` | per-URL on-page review (title/meta/H1/canonical/OG/images/links) | every page has on-page elements |
-| `seo-technical` | 9-dimension technical spine (crawlability, indexability, security, mobile, CWV lab targets, JS render, IndexNow) | every site has a technical layer |
+| `seo-technical` | 10-dimension technical spine with a lab score (crawlability + AI-crawler policy, indexability incl. X-Robots-Tag / 2 MB limit, security, URL, mobile, CWV lab risks, structured data, JS render, SERP presentation) | every site has a technical layer |
 | `seo-schema` | structured-data detection + validation | rich-result eligibility applies to any page type |
 | `seo-sitemap` | sitemap structure + crawl-architecture gates | discovery/architecture is universal |
 | `seo-image-audit` | image SEO (alt coverage, dimensions/CLS, formats, lazy-load) | every site ships images |

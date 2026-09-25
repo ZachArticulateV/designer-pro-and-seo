@@ -7,10 +7,10 @@ with this file. (See README for the narrative version.)
 Legend: ✅ Stable (built, verified, supported) · 🟡 In development (scaffolded,
 not released, excluded from functional claims & support).
 
-Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **14 Core · 28 Lite ·
+Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **15 Core · 27 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.1.0) — 45 skills
+## ✅ Shipping (v1.2.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -40,10 +40,10 @@ free/built-in path — see `references/CAPABILITY-TIERS.md`.
 Orthogonal to Stable, every Stable skill also sits in one **depth tier** — the honest
 "how deep is it" signal introduced with v1 "Deep Core."
 
-- **Core (14)** — deepened this release into a real 3-layer skill: earned per-skill
+- **Core (15)** — deepened this release into a real 3-layer skill: earned per-skill
   `references/` and/or a wired dispatch layer (real Agent-tool fan-out, plus the
   flagship differentiators). These are the skills v1 raises to a higher level.
-- **Lite (28)** — Stable, with a real free/built-in path, but single-file; slated for
+- **Lite (27)** — Stable, with a real free/built-in path, but single-file; slated for
   the same depth pass in **v1.1 "Depth Sweep."** Lite means "not yet 3-layer," not
   "lesser quality."
 - **Routing (3)** — the three-brain hand-off skills (Claude drives; Codex reviews;
@@ -54,12 +54,12 @@ fails if any skill is missing, invented, or double-counted, so the count claim i
 mechanically un-fakeable.
 
 ```depth-tiers
-core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy
-lite:    design-dimensions, design-motion, design-system-persist, design-tokens-emit, design-cro, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-page, seo-technical, seo-schema, seo-sitemap, seo-image-audit, seo-content, seo-content-brief, seo-sxo, seo-hreflang, seo-competitor-pages, seo-programmatic, seo-ecommerce, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
+core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy, seo-technical
+lite:    design-dimensions, design-motion, design-system-persist, design-tokens-emit, design-cro, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-page, seo-schema, seo-sitemap, seo-image-audit, seo-content, seo-content-brief, seo-sxo, seo-hreflang, seo-competitor-pages, seo-programmatic, seo-ecommerce, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
 routing: route-three-brain, route-codex-review, route-gemini-context
 ```
 
-**45 Stable = 14 Core + 28 Lite + 3 routing.**
+**45 Stable = 15 Core + 27 Lite + 3 routing.**
 
 ## 🟡 In development — 0 skills
 
