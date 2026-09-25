@@ -23,11 +23,11 @@ conditional: seo-content, seo-geo, seo-local-unified, seo-ecommerce, seo-google,
 
 | Agent | Covers | Why always |
 |---|---|---|
-| `seo-page` | per-URL on-page review (title/meta/H1/canonical/OG/images/links) | every page has on-page elements |
+| `seo-page` | per-URL review = technical + content audits on one page (two scores) | every page has on-page elements |
 | `seo-technical` | 10-dimension technical spine with a lab score (crawlability + AI-crawler policy, indexability incl. X-Robots-Tag / 2 MB limit, security, URL, mobile, CWV lab risks, structured data, JS render, SERP presentation) | every site has a technical layer |
-| `seo-schema` | structured-data detection + validation | rich-result eligibility applies to any page type |
-| `seo-sitemap` | sitemap structure + crawl-architecture gates | discovery/architecture is universal |
-| `seo-image-audit` | image SEO (alt coverage, dimensions/CLS, formats, lazy-load) | every site ships images |
+| `seo-schema` | JSON-LD validation incl. nested values + the cross-page `@id` entity graph | rich-result eligibility and entity clarity apply to any page type |
+| `seo-sitemap` | sitemap validation + quality gates + the internal-link graph | discovery/architecture is universal |
+| `seo-image-audit` | image SEO (alt quality, formats, srcset, LCP loading, CLS, byte/pixel budgets) | every site ships images |
 
 ## Conditional specialists (added by business type / connected tooling)
 
@@ -45,6 +45,28 @@ conditional: seo-content, seo-geo, seo-local-unified, seo-ecommerce, seo-google,
 presence signals. When a conditional specialist is **not** dispatched, its absence is
 recorded in the audit's "covered / not covered" list and excluded from the score
 denominator (see `scoring-weights.md`) — never silently zeroed.
+
+## Where each specialist's score comes from
+
+Every score is deterministic and built only from observed signals; a specialist with no
+score is excluded from the denominator, never zeroed. `scripts/workflow/site_audit.py`
+produces all of the local ones in one command for a static build.
+
+| Specialist | Engine | Score |
+|---|---|---|
+| `seo-technical` | `tech_audit.py` | lab score (100 − 25/critical − 10/high − 4/medium) |
+| `seo-page` | `tech_audit.py` + `content_audit.py` | mean of the two |
+| `seo-content` | `content_audit.py` | content score |
+| `seo-schema` | `schema_gen.py --html` / `--graph` | validation score (graph score alongside) |
+| `seo-sitemap` | `sitemap_tools.py` + `link_graph.py` | validation score (gates + graph alongside) |
+| `seo-image-audit` | `image_audit.py` | image score |
+| `seo-geo` | `geo_check.py --scorecard` | weighted GEO score |
+| `seo-ecommerce` | `product_audit.py` | merchant / category score |
+| `seo-local-unified` | `nap_check.py` + `geogrid.py` | needs supplied listings / rank data |
+| `seo-google`, `seo-backlinks` | connectors | Tier-1 data only; otherwise not scored |
+
+`seo-hreflang` (`hreflang_tools.py --cluster`) joins the local run whenever pages carry
+hreflang; it is not a dispatched agent, so it sits outside the roster block below.
 
 ## Parity + shape invariants (the release gate enforces)
 

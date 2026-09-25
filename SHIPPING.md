@@ -10,7 +10,7 @@ not released, excluded from functional claims & support).
 Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **24 Core · 18 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.9.0) — 45 skills
+## ✅ Shipping (v1.10.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -40,12 +40,14 @@ free/built-in path — see `references/CAPABILITY-TIERS.md`.
 Orthogonal to Stable, every Stable skill also sits in one **depth tier** — the honest
 "how deep is it" signal introduced with v1 "Deep Core."
 
-- **Core (24)** — deepened this release into a real 3-layer skill: earned per-skill
-  `references/` and/or a wired dispatch layer (real Agent-tool fan-out, plus the
-  flagship differentiators). These are the skills v1 raises to a higher level.
-- **Lite (18)** — Stable, with a real free/built-in path, but single-file; slated for
-  the same depth pass in **v1.1 "Depth Sweep."** Lite means "not yet 3-layer," not
-  "lesser quality."
+- **Core (24)** — a real 3-layer skill: earned per-skill `references/`, a
+  deterministic engine and/or a wired dispatch layer (real Agent-tool fan-out), and a
+  golden example under `references/examples/` pinned by tests. v1.0 shipped 14; the
+  v1.1–v1.10 "Depth Sweep" promoted ten more (seo-technical, seo-schema, seo-page,
+  seo-content, seo-sitemap, seo-image-audit, seo-hreflang, seo-ecommerce, design-cro,
+  design-motion).
+- **Lite (18)** — Stable, with a real free/built-in path, but single-file; next in line
+  for the same depth pass. Lite means "not yet 3-layer," not "lesser quality."
 - **Routing (3)** — the three-brain hand-off skills (Claude drives; Codex reviews;
   Gemini long-context).
 
@@ -75,7 +77,7 @@ web/browser tools + bundled scripts otherwise, so none hard-depends on a paid to
 
 ## Shipping scripts (all stdlib-only, smoke-tested)
 
-`scripts/smoke_test.py` verifies the install (39/39) and `scripts/verify_release.py`
+`scripts/smoke_test.py` verifies the install (40/40) and `scripts/verify_release.py`
 is the release gate. Every other script is a standalone CLI **and** an importable
 library (`design/match.py` is library-only, the ranker behind `design_system.py`):
 
@@ -87,7 +89,7 @@ library (`design/match.py` is library-only, the ranker behind `design_system.py`
   `hreflang_tools`, `image_audit` (image SEO + stdlib header parsing), `link_graph` (internal-link architecture), `llms_txt` (llms.txt generate/validate), `nap_check`, `page_fetch`, `product_audit` (merchant listing + category hygiene), `schema_gen`, `serp_cluster`,
   `site_map`, `sitemap_tools`, `tech_audit`
 - **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
-  `net_safety` (the one shared SSRF guard), `portable_html`, `qa_gate` (static 9-phase gate runner)
+  `net_safety` (the one shared SSRF guard), `portable_html`, `qa_gate` (static 9-phase gate runner), `site_audit` (one-command SEO health score)
 
 Dated search facts every SEO skill relies on live in one file,
 `references/shared/search-landscape-2026.md` (reviewed quarterly).

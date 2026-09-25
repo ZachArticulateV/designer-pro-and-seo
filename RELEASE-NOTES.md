@@ -1,5 +1,35 @@
 # Release Notes
 
+## v1.10.0 — 2026-09-25 — consolidation: one-command site audit (loop cycle 10 of 10)
+
+Closes the ten-cycle "Depth Sweep" (v1.1.0 → v1.10.0).
+- **New `scripts/workflow/site_audit.py`** — the seo-audit orchestrator's local path in
+  one command: runs every applicable engine over a static build (tech, content, schema +
+  entity graph, images, GEO, sitemap + link graph, and — when the signals exist —
+  e-commerce and hreflang), maps each to its specialist score, rolls up with
+  `audit_aggregate.py` (re-normalized over what ran), lists what it did **not** cover and
+  what that needs, and merges findings across pages into one ordered fix list (values
+  that differ only by number are merged and flagged `varies_by_page`). Page types come
+  from the URL classifier so article-only E-E-A-T rules don't fire on home/about pages.
+- `seo-audit` gains the one-command baseline step; the dispatch matrix documents where
+  every specialist's score comes from; README gains the two one-command audits;
+  SHIPPING's tier narrative is updated (24 Core after ten promotions); stale
+  "9-category" / "deepened next in v1.1" copy fixed; the dated landscape file logs
+  which engines now encode each fact.
+- Gates: smoke 40/40 (new site_audit check), 636 unit tests (+7 in
+  `tests/test_site_audit.py`), verify_release 56/56.
+
+### Depth Sweep summary (v1.1 → v1.10)
+- 14 → **24 Core** skills; **33 → 42** stdlib scripts; smoke **36 → 40**; unit tests
+  **478 → 636**; every new engine pinned by a golden example.
+- New engines: `ai_crawlers`, `content_audit`, `llms_txt`, `link_graph`, `image_audit`,
+  `product_audit`, `cro_audit`, `motion_audit`, `qa_gate`, `site_audit`; deep rewrites of
+  `tech_audit`, `schema_gen`, `sitemap_tools`, `hreflang_tools`, `geo_check`, drift (D15).
+- Bugs fixed along the way: plain `http://` links reported as mixed content; the schema
+  agent advertising a `--graph-check` mode that did not exist; Markdown with inline HTML
+  read as zero-word HTML; `x-default` counted as a hreflang self-reference / return link;
+  "First Input Paint" (FID) naming; a promised sitelinks search box that Google removed.
+
 ## v1.9.0 — 2026-09-25 — design depth + a real qa-gate runner (loop cycle 9 of 10)
 
 **24 Core · 18 Lite · 3 routing.** `design-cro` and `design-motion` become Core, and the

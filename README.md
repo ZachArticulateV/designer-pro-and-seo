@@ -35,10 +35,11 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.9.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **24 Core,
+> **Shipping status (v1.10.0 "Depth Sweep").** **45 of 45 skills are Stable** — **24 Core,
 > 18 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
-> APIs, smoke-tested). Core skills are 3-layer (earned references + real Agent-tool
-> fan-out); Lite skills are Stable single-file, deepened next in v1.1. Every skill
+> APIs, smoke-tested). Core skills are 3-layer (earned references + a deterministic
+> engine and/or real Agent-tool fan-out, each pinned by a golden example); Lite skills
+> are Stable single-file and get the same depth pass next. Every skill
 > that can use an external tool is **tool-aware**: it uses a dedicated MCP/CLI when
 > present and falls back to Claude's built-in web/browser tools + bundled scripts
 > otherwise (`references/CAPABILITY-TIERS.md`). Skill descriptions describe only what
@@ -65,7 +66,7 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.9.0) — 45 Stable, mostly free-tier
+## Shipping skills (v1.10.0) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
 **★ marks the 24 Core** skills (deepened this release — earned reference docs and/or a
@@ -129,14 +130,30 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 - `seo-backlinks` — backlink profile: referring domains, anchors, toxic flags, competitor gap.
 - `seo-image-gen` — generate SEO-ready images (OG, heroes, infographics, favicons) at correct dimensions.
 
-Backed by **41 scripts** — all standard-library-only Python; every one but the design
+Backed by **42 scripts** — all standard-library-only Python; every one but the design
 ranker library is also a runnable CLI.
 "Standard-library-only" means they use only what ships with Python, so there is
 **nothing to `pip install`**. They include the design engine + palette generator, page
-renderer, token emitter, HTML porter, CSV profiler, capability probe, a shared SSRF
-guard + guarded page fetcher, and the SEO tools (schema, sitemap, tech-audit, GEO,
-hreflang, drift, clustering, local), plus a smoke test and the release verifier. From a
-clone, `python3 scripts/smoke_test.py` verifies them. See **QUICKSTART.md**.
+renderer, token emitter, CRO and motion audits, HTML porter, CSV profiler, capability
+probe, a shared SSRF guard + guarded page fetcher, and the SEO engines (technical,
+content, schema + entity graph, sitemap + link graph, images, GEO + llms.txt + AI
+crawlers, hreflang, e-commerce, drift, clustering, local), plus a smoke test and the
+release verifier. From a clone, `python3 scripts/smoke_test.py` verifies them. See
+**QUICKSTART.md**.
+
+### Two one-command audits over a static build
+
+```
+python3 scripts/workflow/site_audit.py --dir dist/ --base-url https://site.com --human     # SEO health score + one fix list
+python3 scripts/workflow/qa_gate.py    --dir dist/ --base-url https://site.com --report    # pre-delivery PASS / CONDITIONAL / FAIL
+```
+
+`site_audit.py` runs every SEO engine that applies, scores each specialist, rolls them
+up re-normalized over what actually ran, says what it did **not** cover (and what that
+needs), and merges findings across pages. `qa_gate.py` runs the same engines plus a
+secret scan and deployment checks, and fills the client-facing QA template. Every
+current-state search fact they rely on is dated in
+`references/shared/search-landscape-2026.md`.
 
 ## Tool-aware, not paid-gated
 

@@ -301,6 +301,20 @@ def main():
         check("qa_gate fails the golden broken build (Critical, not client-ready)", qa_ok,
               "gate blocks the broken build" if qa_ok else "gate verdict wrong")
 
+        # site_audit: the one-command SEO run must score a build and stay honest about scope
+        rs = subprocess.run(py() + [os.path.join(ROOT, "scripts", "workflow", "site_audit.py"),
+             "--dir", os.path.join(ROOT, "references", "examples", "seo-sitemap", "site"),
+             "--base-url", "https://example.test", "--as-of", "2026-09-25"],
+             capture_output=True, encoding="utf-8")
+        try:
+            sd = json.loads(rs.stdout)
+            sa_ok = (0 <= sd["health"]["overall_score"] <= 100 and "seo-google" in sd["not_covered"]
+                     and bool(sd["fixes"]))
+        except (json.JSONDecodeError, KeyError, TypeError):
+            sa_ok = False
+        check("site_audit scores a build and lists what it did not cover", sa_ok,
+              "health score + not-covered list" if sa_ok else "site_audit output wrong")
+
     passed = sum(1 for _, ok, _ in results if ok)
     total = len(results)
     print(f"\n{passed}/{total} checks passed.")

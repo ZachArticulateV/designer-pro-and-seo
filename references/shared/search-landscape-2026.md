@@ -131,6 +131,10 @@ Do not tear out valid markup because its visual went away.
 
 ## 9. What changed recently (update log for this file)
 
+- **2026-09 (v1.2–v1.10)** — Encoded into engines: 2 MB limit and X-Robots-Tag
+  (`tech_audit.py`), retired rich results and merchant/return/shipping types
+  (`schema_gen.py`, `product_audit.py`), crawler classes (`ai_crawlers.py`, drift D15),
+  llms.txt structure (`llms_txt.py`), AI Mode query fan-out (`geo_check.py --questions`).
 - **2026-09** — File created. Consolidated: 2 MB index limit, FAQ rich-result end,
   AI-crawler classes (search / user / training / search-engine), Google-Extended scope,
   August 2026 spam update, AI Mode default push.

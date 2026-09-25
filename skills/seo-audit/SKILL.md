@@ -33,7 +33,15 @@ crawling (up to ~500 pages, business-type auto-detect at scale) activates when t
 ## Steps
 
 1. **Scope.** Take the URL(s). If `seo-firecrawl` is available, crawl to discover
-   pages; otherwise audit the provided URLs and say so.
+   pages; otherwise audit the provided URLs and say so. **For a local static build**,
+   the whole free path is one command — every applicable engine, per-specialist
+   scores, the re-normalized health score, a covered / not-covered list, and one fix
+   list merged across pages:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/workflow/site_audit.py" --dir dist/ --base-url https://site.com --human
+   ```
+   Use it as the baseline, then dispatch the agents below for live URLs and for the
+   judgement the engines can't make.
 2. **Profile.** Infer business type (SaaS / e-commerce / local / publisher /
    agency) from the content to decide which conditional specialists apply.
 3. **Dispatch the specialist agents in parallel** — real Agent-tool sub-agents, each
@@ -86,6 +94,7 @@ crawling (up to ~500 pages, business-type auto-detect at scale) activates when t
 - `references/seo-audit/scoring-weights.md` (required) — the health-score weight table
   + re-normalization + grade bands
 - `scripts/workflow/audit_aggregate.py` (required) — re-normalized health-score fan-in
+- `scripts/workflow/site_audit.py` (required) — the local one-command engine run + fan-in
 - `scripts/seo/business_type.py` (required) — business-type classification for
   conditional dispatch
 - Optional: `seo-firecrawl` (full-site crawl)

@@ -1,7 +1,7 @@
 # Golden example — seo-technical (Tier-2: `tech_audit.py`)
 
 Proves the **free, key-absent Tier-2** path of `seo-technical` produces a real
-9-category technical audit with no network and no API key — the `cwv-field`
+10-dimension technical audit (with a lab score) with no network and no API key — the `cwv-field`
 capability's built-in product. Reproducible offline.
 
 ## Input
