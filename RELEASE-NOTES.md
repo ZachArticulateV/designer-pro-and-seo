@@ -1,5 +1,33 @@
 # Release Notes
 
+## v1.3.0 — 2026-09-25 — seo-schema promoted to Core (loop cycle 3 of 10)
+
+`seo-schema` becomes a 3-layer Core skill (**16 Core · 26 Lite · 3 routing**).
+- **`schema_gen.py` rewritten**: `@graph` flattening (wrapper `@context` inherited),
+  nested-value validation (Product → Offer → OfferShippingDetails /
+  MerchantReturnPolicy, ratings, reviews — `itemReviewed` implied when nested),
+  **one-of requirement groups** (Product needs offers/review/aggregateRating), value
+  rules (ISO 8601 dates, `dateModified ≥ datePublished`, absolute URLs, plain-number
+  price, ISO 4217 currency, schema.org availability/condition enums, rating bounds,
+  breadcrumb 1..N order), subtype inheritance (BlogPosting → Article, 40+ LocalBusiness
+  subtypes), and a deterministic 0-100 score over `{type, severity, property, finding,
+  fix}` issues.
+- **New modes:** `--html` (extract + validate every ld+json block), `--graph` /
+  `--graph-check` (cross-page `@id` entity graph: dangling refs, conflicting types,
+  split Organization, missing hubs), `--site` (linked Organization → WebSite → WebPage →
+  BreadcrumbList starter, self-validated). The agent's advertised `--graph-check` now
+  actually exists — previously the doc promised a mode the script did not have.
+- **Type coverage for 2026:** ProductGroup, MerchantReturnPolicy (org-level),
+  OfferShippingDetails, AggregateOffer, ProfilePage, DiscussionForumPosting, QAPage,
+  Recipe, JobPosting, SoftwareApplication, ImageObject, ItemList, Dataset (Dataset
+  Search only); retired displays flagged info (FAQ 2026-05-07, HowTo, Course Info,
+  Claim Review, Estimated Salary, Special Announcement, Vehicle Listing, practice
+  problems).
+- New `references/seo-schema/entity-graph.md`; schema catalog extended; new golden
+  example `references/examples/seo-schema/` (validation 68/100, graph 90/100 — pinned).
+- Gates: smoke 37/37, 543 unit tests (+19 in `tests/test_schema_gen.py`),
+  verify_release 56/56.
+
 ## v1.2.0 — 2026-09-25 — seo-technical promoted to Core (loop cycle 2 of 10)
 
 `seo-technical` becomes a real 3-layer Core skill (**15 Core · 27 Lite · 3 routing**).

@@ -33,7 +33,9 @@ bundled script for each mode:
 
 ```
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --list                                   # supported types + required props
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --validate markup.json                   # extracted ld+json blocks
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --html page.html                        # extract + validate every ld+json block
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --graph home.html page.html              # cross-page @id entity graph
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --validate markup.json                   # raw JSON-LD
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/schema_gen.py" --type Article --data '{"headline":"..."}'  # generate (auto-validates)
 ```
 
@@ -67,7 +69,7 @@ is deterministic from the script.
 capability:   schema
 tier1:        none
 tier1_signal: none
-tier2:        scripts/seo/schema_gen.py (detect/validate/generate JSON-LD + --graph-check against 2026 rich-results rules)
+tier2:        scripts/seo/schema_gen.py (--html detect+validate incl. nested values, --graph cross-page @id check, --type / --site generate; Sept 2026 rich-results rules)
 tier2_yields: validated JSON-LD blocks + missing required/recommended report + deprecation and @id-graph flags, zero spend
 tier3:        none
 tier3_signal: none
@@ -86,11 +88,11 @@ agent:        seo-schema
 status:       ok | partial | error
 tier_ran:     2 | 4
 target:       <url or local file/markup validated>
-findings:     <JSON array of {type, severity, finding, fix}; severity in critical|high|medium|info>
+findings:     <JSON array of {type, severity, finding, fix}; severity in critical|high|medium|info (schema_gen issues, property path folded into finding)>
 detected:     <JSON array of Schema.org @types found on the page, or []>
 deprecations: <deprecated types flagged, e.g. FAQPage rich result, or none>
 graph_check:  <@id references resolve | unresolved: <list> | not-run>
-score:        null
+score:        <0-100 from schema_gen.py `score` (validation; graph score reported alongside)>
 needs_tier1:  none
 handoffs:     seo-page (page context), seo-technical (structured-data dimension) | none
 tier_line:    <one sentence: which tier ran (built-in is canonical for schema)>

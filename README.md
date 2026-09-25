@@ -35,8 +35,8 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.2.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **15 Core,
-> 27 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
+> **Shipping status (v1.3.0 "Depth Sweep" in progress).** **45 of 45 skills are Stable** — **16 Core,
+> 26 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
 > APIs, smoke-tested). Core skills are 3-layer (earned references + real Agent-tool
 > fan-out); Lite skills are Stable single-file, deepened next in v1.1. Every skill
 > that can use an external tool is **tool-aware**: it uses a dedicated MCP/CLI when
@@ -65,11 +65,11 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.2.0) — 45 Stable, mostly free-tier
+## Shipping skills (v1.3.0) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
-**★ marks the 15 Core** skills (deepened this release — earned reference docs and/or a
-real parallel agent fan-out). The other 27 are **Lite** (Stable and single-file, slated
+**★ marks the 16 Core** skills (deepened this release — earned reference docs and/or a
+real parallel agent fan-out). The other 26 are **Lite** (Stable and single-file, slated
 for the same depth pass in v1.1), and 3 are **routing** helpers.
 
 **Design (10)**
@@ -108,7 +108,7 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 - ★ `seo-audit` — orchestrates a multi-specialist audit → one weighted health score + prioritized fix list.
 - `seo-page` — single-URL SEO review (on-page, meta, schema, images, links) in one pass.
 - ★ `seo-technical` — 10-dimension technical audit with a fix per finding + a lab score (crawl & AI-crawler policy, index incl. 2 MB limit, security, mobile, CWV lab risks, JS render).
-- `seo-schema` — detect / validate / generate Schema.org JSON-LD structured data.
+- ★ `seo-schema` — JSON-LD from HTML: nested-value validation (offers, returns, ratings), a cross-page `@id` entity-graph check, a linked site-graph starter, retired-rich-result flags, and a score.
 - `seo-sitemap` — audit and generate sitemaps.org-compliant XML sitemaps.
 - `seo-image-audit` — audit page images (alt, size, WebP/AVIF, srcset, lazy-load, CLS-safe dimensions).
 - `seo-content` — content quality + E-E-A-T + AI-citation-readiness analysis.

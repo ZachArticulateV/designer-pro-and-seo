@@ -43,6 +43,24 @@ against. JSON-LD is the preferred serialization. Knowledge, not steps.
 | **AggregateRating** | `ratingValue`, `reviewCount` (or `ratingCount`) | `bestRating`, `worstRating` |
 | **Review** | `reviewRating` (→ `Rating.ratingValue`), `author` | `datePublished`, `reviewBody` |
 
+## Merchant, community & profile types (2026 additions)
+
+| Type | Required | Recommended |
+|---|---|---|
+| **ProductGroup** | `name` | `productGroupID`, `variesBy`, `hasVariant` (each a full `Product` + `Offer`) |
+| **MerchantReturnPolicy** | `applicableCountry`, `returnPolicyCategory` | `merchantReturnDays`, `returnMethod`, `returnFees` — declare once on `Organization` |
+| **OfferShippingDetails** | `shippingDestination` | `shippingRate`, `deliveryTime` |
+| **ProfilePage** | `mainEntity` (Person/Organization) | `dateCreated`, `dateModified` |
+| **DiscussionForumPosting** | `author`, `datePublished`, one of `text`/`image`/`video` | `headline`, `url`, `comment`, `interactionStatistic` |
+| **Recipe** | `name`, `image` | `recipeIngredient`, `recipeInstructions`, `totalTime`, `nutrition`, `aggregateRating` |
+| **JobPosting** | `title`, `description`, `datePosted`, `hiringOrganization`, one of `jobLocation`/`applicantLocationRequirements` | `validThrough`, `employmentType`, `baseSalary`, `directApply` |
+| **SoftwareApplication** | `name`, `offers`, one of `aggregateRating`/`review` | `applicationCategory`, `operatingSystem` |
+| **ImageObject** | `contentUrl` | `license`, `acquireLicensePage`, `creator`, `creditText` |
+
+`Product` also needs **one of** `offers`, `review`, or `aggregateRating`. The value rules
+(ISO dates, absolute URLs, numeric price, ISO 4217) and the `@id` graph conventions are
+in `references/seo-schema/entity-graph.md`.
+
 ## Local & people types
 
 | Type | Required | Recommended |
