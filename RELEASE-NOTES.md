@@ -1,5 +1,31 @@
 # Release Notes
 
+## v1.1.0 — 2026-09-25 — 2026 search currency (loop cycle 1 of 10)
+
+First cycle of the "gold standard" pass: make every SEO fact current as of
+September 2026 and give AI-crawler policy one source of truth.
+- **New `scripts/seo/ai_crawlers.py`** — the one AI-crawler registry (four classes:
+  search engine / AI search / user-triggered / training, with core flags) plus an
+  **RFC 9309** robots.txt evaluator (group merge, specific-over-`*`, longest match,
+  Allow wins ties, `*`/`$` wildcards) and a policy generator
+  (`--generate citable-no-training`). `geo_check.py` and `tech_audit.py` now import
+  it instead of carrying two diverging bot lists.
+- **New verdict `search-engine-blocked`** (critical): a blocked Googlebot/Bingbot also
+  removes AI Overviews / AI Mode / Copilot visibility; the GEO scorecard zeroes crawler
+  access for it. User-triggered fetchers (ChatGPT-User, Claude-User, Perplexity-User)
+  are judged as their own class; the Google-Extended scope note is emitted when it is
+  blocked (it does not control AI Overviews).
+- **New `references/shared/search-landscape-2026.md`** — dated fact sheet (AI Mode,
+  2 MB Googlebot index limit, FAQ rich-result end on 2026-05-07, HowTo / sitelinks
+  search box / 2025-retired features, spam policies incl. the August 2026 spam update,
+  crawler classes, llms.txt confidence), cited by seo-audit / seo-technical / seo-geo.
+- Fixes: "First Input Paint" → First Input *Delay* in `cwv-thresholds.md`; the schema
+  catalog and `schema_gen.py` no longer promise a sitelinks search box; `HowTo` is now
+  flagged as a retired rich result; SHIPPING's stale "13 CLI tools" list replaced with
+  the real per-folder script inventory.
+- Gates: smoke 37/37 (new ai_crawlers generate→judge round-trip), 500 unit tests
+  (+22 in `tests/test_ai_crawlers.py`), verify_release 56/56.
+
 ## v1.0.4 — 2026-07-05 — open contribution workflow
 
 Community contributions are now first-class (no code, skill, or gate change):

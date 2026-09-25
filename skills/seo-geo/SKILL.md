@@ -122,5 +122,9 @@ DataForSEO / AI-visibility MCP).
 "AI visibility" here means **optimizing** content to get cited (the free, on-page
 path); to **measure/track** LLM mentions with hard data, use `seo-dataforseo` (paid MCP).
 
-GEO moves fast — refresh the llms.txt guidance and AI-crawler list periodically.
+GEO moves fast — the AI-crawler list lives in one place, `scripts/seo/ai_crawlers.py`
+(`--list` prints it; `--generate citable-no-training` emits a ready robots.txt block),
+and the dated landscape facts (AI Overviews / AI Mode sourcing, Google-Extended scope,
+llms.txt confidence) live in `references/shared/search-landscape-2026.md`. Refresh both
+quarterly.
 The checker degrades gracefully offline (score content with `--content` alone).

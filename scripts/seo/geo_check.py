@@ -37,10 +37,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from net_safety import (  # noqa: E402
     safe_open, validate_url, UrlValidationError, SafeFetchError,
 )
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ai_crawlers  # noqa: E402  (shared AI-crawler registry + robots evaluator)
 
 UA = "Mozilla/5.0 (compatible; designer-pro-seo-geo/1.0)"
-TRAINING_BOTS = ["GPTBot", "ClaudeBot", "Google-Extended", "CCBot"]
-RETRIEVAL_BOTS = ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot"]
+TRAINING_BOTS = ai_crawlers.TRAINING_BOTS      # back-compat re-exports
+RETRIEVAL_BOTS = ai_crawlers.RETRIEVAL_BOTS
 DEPENDENT_START = re.compile(r"^\s*(this|that|these|those|it|they|he|she|here|"
                              r"however|therefore|thus|also|additionally|furthermore)\b", re.I)
 SPECIFIC = re.compile(r"(\d{4}|\d+%|\$\d|\d+\.\d+|\b\d{2,}\b|\bper cent\b|\bpercent\b)")
@@ -173,107 +175,35 @@ def score_passages(text):
 
 
 # --- AI-crawler policy -------------------------------------------------------
-
-def _robots_groups(text):
-    """Parse robots.txt into [(agents:set(lowercased), disallows:[...], allows:[...])].
-    A blank line or a new run of User-agent lines starts a fresh group (standard grouping)."""
-    groups, agents, dis, allow, in_rules = [], set(), [], [], False
-    for raw in text.splitlines():
-        line = raw.split("#", 1)[0].strip()
-        if not line:
-            continue
-        if ":" not in line:
-            continue
-        field, _, value = line.partition(":")
-        field = field.strip().lower()
-        value = value.strip()
-        if field == "user-agent":
-            if in_rules and agents:            # rules seen -> previous group closes
-                groups.append((agents, dis, allow))
-                agents, dis, allow, in_rules = set(), [], [], False
-            agents.add(value.lower())
-        elif field == "disallow":
-            in_rules = True
-            dis.append(value)
-        elif field == "allow":
-            in_rules = True
-            allow.append(value)
-    if agents:
-        groups.append((agents, dis, allow))
-    return groups
-
-
-def _bot_status(bot, groups):
-    """'blocked' | 'allowed' | 'unmentioned' for a single bot. A specific User-agent
-    group wins over the '*' group; a root Disallow (/) blocks unless a root Allow overrides."""
-    specific = star = None
-    for agents, dis, allow in groups:
-        if bot.lower() in agents:
-            specific = (dis, allow)
-        if "*" in agents:
-            star = (dis, allow)
-    grp = specific if specific is not None else star
-    if grp is None:
-        return "unmentioned"
-    dis, allow = grp
-    blocked = ("/" in dis) and ("/" not in allow)
-    return "blocked" if blocked else "allowed"
-
-
-def _stance(bots, groups):
-    statuses = {b: _bot_status(b, groups) for b in bots}
-    blocked = [b for b, s in statuses.items() if s == "blocked"]
-    if blocked and len(blocked) == len(bots):
-        stance = "blocked"
-    elif not blocked:
-        stance = "open"
-    else:
-        stance = "partial"
-    return stance, statuses
-
+# The crawler registry + RFC 9309 evaluator live in ai_crawlers.py (one source of truth
+# shared with tech_audit); this wrapper keeps the report shape geo_check has always had.
 
 def analyze_robots(text):
-    """Judge a site's AI-crawler policy: are AI *retrieval* bots (the ones that make you
-    citable) allowed, and what is the AI *training* stance? Best practice is to allow
-    retrieval even when training is blocked. Deterministic; pure string parsing."""
-    groups = _robots_groups(text)
-    r_stance, r_status = _stance(RETRIEVAL_BOTS, groups)
-    t_stance, t_status = _stance(TRAINING_BOTS, groups)
+    """Judge a site's AI-crawler policy: are AI *search* bots (the ones that make you
+    citable) allowed, is a classic search engine blocked (that also kills AI Overviews /
+    AI Mode visibility), and what is the AI *training* stance? Best practice is to allow
+    search + user-triggered fetchers even when training is blocked. Deterministic."""
+    v = ai_crawlers.verdict(text)
+    cls = v["classes"]
 
-    def split(status):
-        return {"allowed": [b for b, s in status.items() if s in ("allowed", "unmentioned")],
-                "blocked": [b for b, s in status.items() if s == "blocked"]}
+    def split(name):
+        return {"allowed": cls[name]["allowed"], "blocked": cls[name]["blocked"]}
 
-    if r_stance == "blocked":
-        verdict = "retrieval-blocked"
-        note = ("Retrieval/search bots are disallowed — the site is opting OUT of AI-answer "
-                "citation. Allow OAI-SearchBot / PerplexityBot / Claude-SearchBot to stay citable.")
-    elif r_stance == "partial":
-        verdict = "retrieval-partial"
-        note = ("Some retrieval bots are blocked — citation coverage is uneven. Allow all "
-                "retrieval bots so every AI answer engine can cite you.")
-    elif t_stance == "blocked":
-        verdict = "citable-training-blocked"
-        note = ("Best-practice posture: retrieval bots allowed (stays citable) while training "
-                "crawlers are blocked (opted out of model training).")
-    elif t_stance == "partial":
-        verdict = "citable-training-partial"
-        note = "Retrieval is open; training is blocked for some crawlers only."
-    else:
-        verdict = "fully-open"
-        note = "All AI crawlers — retrieval and training — are allowed."
-
-    referenced = set().union(*[a for a, _, _ in groups]) if groups else set()
     return {
-        "verdict": verdict,
-        "retrieval_stance": r_stance,
-        "training_stance": t_stance,
-        "retrieval_bots": split(r_status),
-        "training_bots": split(t_status),
-        # backward-compatible keys (a bot is "referenced" if it appears in any group)
-        "retrieval_bots_referenced": [b for b in RETRIEVAL_BOTS if b.lower() in referenced],
-        "training_bots_referenced": [b for b in TRAINING_BOTS if b.lower() in referenced],
-        "note": note,
+        "verdict": v["verdict"],
+        "search_engine_stance": cls["search_engine"]["stance"],
+        "retrieval_stance": cls["search"]["stance"],
+        "user_fetch_stance": cls["user"]["stance"],
+        "training_stance": cls["training"]["stance"],
+        "search_engine_bots": split("search_engine"),
+        "retrieval_bots": split("search"),
+        "user_fetch_bots": split("user"),
+        "training_bots": split("training"),
+        # backward-compatible keys (a bot is "referenced" if a group names it)
+        "retrieval_bots_referenced": cls["search"]["explicitly_named"],
+        "training_bots_referenced": cls["training"]["explicitly_named"],
+        "sitemaps": v["sitemaps"],
+        "note": v["note"],
     }
 
 
@@ -315,6 +245,8 @@ def build_scorecard(report):
     cr_score = None
     if has_pol:
         cr_score = {"open": 100, "partial": 40, "blocked": 0}.get(pol["retrieval_stance"], 0)
+        if pol.get("search_engine_stance", "open") != "open":
+            cr_score = 0     # a blocked Googlebot/Bingbot also removes AI-answer visibility
     cats.append({"name": "ai_crawler_access", "available": has_pol, "score": cr_score,
                  "note": ("retrieval %s" % pol["retrieval_stance"]) if has_pol
                          else "no robots data — pass --robots or --url"})

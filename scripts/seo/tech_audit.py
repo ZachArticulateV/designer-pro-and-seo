@@ -33,10 +33,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from net_safety import (  # noqa: E402
     safe_open, validate_url, UrlValidationError, SafeFetchError,
 )
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ai_crawlers  # noqa: E402  (shared AI-crawler registry + robots evaluator)
 
 UA = "Mozilla/5.0 (compatible; designer-pro-seo-techaudit/1.0)"
-TRAINING_BOTS = ["GPTBot", "ClaudeBot", "Google-Extended", "CCBot", "Bytespider"]
-RETRIEVAL_BOTS = ["OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "ChatGPT-User"]
+TRAINING_BOTS = ai_crawlers.TRAINING_BOTS      # back-compat re-exports
+RETRIEVAL_BOTS = ai_crawlers.RETRIEVAL_BOTS
 SEC_HEADERS = {
     "strict-transport-security": "HSTS",
     "content-security-policy": "CSP",
@@ -166,57 +168,27 @@ def analyze_headers(headers):
 
 
 def _agent_disallows_root(raw, bot):
-    """True when robots.txt blocks `bot` from / under group precedence: the bot's own
-    User-agent group wins; otherwise the `*` group applies. A group blocks / when it
-    has `Disallow: /` with no overriding `Allow: /`. This is a real block check, not a
-    mere User-agent mention."""
-    lines = [l.split("#", 1)[0].rstrip() for l in raw.splitlines()]
-    groups, i, n = [], 0, len(lines)
-    while i < n:
-        if not re.match(r"\s*User-agent\s*:", lines[i], re.I):
-            i += 1
-            continue
-        agents = []
-        while i < n and re.match(r"\s*User-agent\s*:", lines[i], re.I):
-            agents.append(lines[i].split(":", 1)[1].strip().lower())
-            i += 1
-        disallow_root = allow_root = False
-        while i < n and not re.match(r"\s*User-agent\s*:", lines[i], re.I):
-            d = re.match(r"\s*Disallow\s*:\s*(.*?)\s*$", lines[i], re.I)
-            a = re.match(r"\s*Allow\s*:\s*(.*?)\s*$", lines[i], re.I)
-            if d and d.group(1) == "/":
-                disallow_root = True
-            if a and a.group(1) == "/":
-                allow_root = True
-            i += 1
-        groups.append((set(agents), disallow_root and not allow_root))
-    bot = bot.lower()
-    for agents, blocks in groups:   # a bot-specific group takes precedence over '*'
-        if bot in agents:
-            return blocks
-    for agents, blocks in groups:   # otherwise the wildcard group applies
-        if "*" in agents:
-            return blocks
-    return False
+    """True when robots.txt blocks `bot` from / (RFC 9309 group + longest-match
+    precedence, via the shared ai_crawlers evaluator)."""
+    groups, _ = ai_crawlers.parse_robots(raw)
+    return ai_crawlers.bot_status(bot, groups, "/") == "blocked"
 
 
 def analyze_robots(raw):
     notes = []
-    blocked = [b for b in TRAINING_BOTS if _agent_disallows_root(raw, b)]
-    referenced = [b for b in (TRAINING_BOTS + RETRIEVAL_BOTS)
-                  if re.search(rf"User-agent:\s*{re.escape(b)}", raw, re.I)]
-    if blocked:
-        notes.append({"severity": "info",
-                      "msg": "robots.txt blocks AI training crawlers from / (" + ", ".join(blocked)
-                             + "). Confirm retrieval bots (OAI-SearchBot/PerplexityBot) stay allowed so content remains citable."})
-    elif referenced:
-        notes.append({"severity": "info",
-                      "msg": "robots.txt references AI crawlers (" + ", ".join(referenced)
-                             + ") but none are fully Disallowed from / -- verify the intended policy."})
-    else:
-        notes.append({"severity": "info",
-                      "msg": "robots.txt does not reference AI training crawlers (GPTBot/Google-Extended/ClaudeBot). 2026 best practice: decide explicitly whether to block training while allowing retrieval bots (OAI-SearchBot/PerplexityBot) so content stays citable."})
-    if "sitemap:" not in raw.lower():
+    v = ai_crawlers.verdict(raw)
+    cls = v["classes"]
+    sev = {"search-engine-blocked": "critical", "retrieval-blocked": "high",
+           "retrieval-partial": "medium"}.get(v["verdict"], "info")
+    named = sorted({b for c in cls.values() for b in c["explicitly_named"]})
+    msg = "AI-crawler policy: %s -- %s" % (v["verdict"], v["note"])
+    if not named and v["verdict"] == "fully-open":
+        msg += (" robots.txt names no AI crawler: decide explicitly whether to block "
+                "training (GPTBot/ClaudeBot/Google-Extended/CCBot) while keeping AI search "
+                "(OAI-SearchBot/Claude-SearchBot/PerplexityBot) allowed. "
+                "`ai_crawlers.py --generate citable-no-training` emits a ready block.")
+    notes.append({"severity": sev, "msg": msg})
+    if not v["sitemaps"]:
         notes.append({"severity": "medium", "msg": "robots.txt has no Sitemap: directive"})
     return notes
 

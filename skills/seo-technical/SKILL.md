@@ -17,9 +17,13 @@ to `seo-google` and deep structured-data work to `seo-schema`.
 Current standards it encodes: **Core Web Vitals targets LCP < 2.5s, CLS < 0.1,
 INP < 200ms** (INP, not FID, is the metric — and the most-failed one); the 2026
 robots.txt nuance of **blocking AI *training* crawlers (GPTBot, Google-Extended,
-ClaudeBot) while allowing AI *retrieval* bots (OAI-SearchBot, PerplexityBot)** so
-content stays citable; and **IndexNow** for instant change notification to
-Bing/Yandex/AI engines.
+ClaudeBot) while allowing AI *search* bots (OAI-SearchBot, Claude-SearchBot,
+PerplexityBot) and user-triggered fetchers** so content stays citable — judged by the
+shared RFC 9309 evaluator `scripts/seo/ai_crawlers.py`, which also flags a blocked
+Googlebot/Bingbot as critical (that removes AI Overviews / AI Mode visibility too);
+and **IndexNow** for instant change notification to participating engines (Bing,
+Yandex, Seznam, Naver — not Google). Dated facts (2 MB index limit, rich-result
+retirements, crawler classes) come from `references/shared/search-landscape-2026.md`.
 
 ## Triggers
 

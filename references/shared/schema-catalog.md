@@ -21,7 +21,7 @@ against. JSON-LD is the preferred serialization. Knowledge, not steps.
 | Type | Required | Recommended |
 |---|---|---|
 | **Organization** | `name` | `url`, `logo`, `sameAs`, `contactPoint` |
-| **WebSite** | `name`, `url` | `potentialAction` (SearchAction for sitelinks search box) |
+| **WebSite** | `name`, `url` | `alternateName` (site-name signal). `SearchAction` is harmless but no longer yields a sitelinks search box (feature removed) |
 | **WebPage** | `name` | `url`, `description`, `breadcrumb`, `primaryImageOfPage` |
 | **BreadcrumbList** | `itemListElement` (ordered `ListItem`s with `position`, `name`, `item`) | — |
 
@@ -31,7 +31,7 @@ against. JSON-LD is the preferred serialization. Knowledge, not steps.
 |---|---|---|
 | **Article / BlogPosting / NewsArticle** | `headline` | `image`, `datePublished`, `dateModified`, `author` (Person/Organization), `publisher` |
 | **FAQPage** | `mainEntity` → `Question` each with an `acceptedAnswer` | — (note the reduced rich-result eligibility below) |
-| **HowTo** | `name`, `step` (`HowToStep`s) | `image`, `totalTime`, `supply`, `tool` |
+| **HowTo** | `name`, `step` (`HowToStep`s) | `image`, `totalTime`, `supply`, `tool` — valid schema, **no rich result** (display removed) |
 | **VideoObject** | `name`, `thumbnailUrl`, `uploadDate` | `description`, `duration`, `contentUrl` / `embedUrl` |
 
 ## Commerce types
@@ -63,13 +63,16 @@ against. JSON-LD is the preferred serialization. Knowledge, not steps.
 - **Ratings need real aggregate data.** `AggregateRating` without a genuine
   `reviewCount` is invalid and risks a manual action.
 
-## FAQPage eligibility note (kept current)
+## Retired rich-result displays (kept current)
 
-Rich-result display for `FAQPage` was narrowed to a small set of authoritative
-government and health sites; for most sites valid FAQ markup no longer produces
-the expanded SERP treatment. The markup remains valid and machine-readable for
-non-Google consumers and AI answer engines, so the plugin still emits it where
-genuinely useful but does not promise the rich result.
+FAQ rich results ended for **all** sites on May 7, 2026 (after an earlier narrowing
+to government/health sites); HowTo rich results and the sitelinks search box are also
+gone, as are the 2025-retired features (Course Info, Claim Review, Estimated Salary,
+Learning Video, Special Announcement, Vehicle Listing). The markup stays valid and
+machine-readable for ranking systems and AI answer engines, so the plugin still emits
+it where genuinely useful but never promises the visual. The dated status table lives
+in `search-landscape-2026.md` §5 — update that file, not this one, when Google changes
+a feature.
 
 ## Free-path note
 

@@ -54,6 +54,12 @@ SPEC = {
         "deprecated_rich": True,
         "notes": "FAQ rich results were deprecated by Google on 2026-05-07. Still valid schema and useful for AI/semantic context, but will not produce a Google rich result.",
     },
+    "HowTo": {
+        "required": ["name", "step"],
+        "recommended": ["image", "totalTime", "supply", "tool"],
+        "deprecated_rich": True,
+        "notes": "HowTo rich results were removed from Google Search. Still valid schema and useful machine context, but will not produce a rich result.",
+    },
     "Event": {
         "required": ["name", "startDate", "location"],
         "recommended": ["endDate", "offers", "performer", "image", "eventStatus"],
@@ -64,8 +70,8 @@ SPEC = {
     },
     "WebSite": {
         "required": ["name", "url"],
-        "recommended": ["potentialAction"],
-        "notes": "potentialAction (SearchAction) enables the sitelinks search box.",
+        "recommended": ["alternateName"],
+        "notes": "WebSite supplies the site-name signal. The sitelinks search box was removed, so a SearchAction potentialAction no longer yields a search box (harmless to keep).",
     },
     "Review": {
         "required": ["itemReviewed", "reviewRating", "author"],

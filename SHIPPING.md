@@ -10,7 +10,7 @@ not released, excluded from functional claims & support).
 Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **14 Core · 28 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.0.4) — 45 skills
+## ✅ Shipping (v1.1.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -75,13 +75,22 @@ web/browser tools + bundled scripts otherwise, so none hard-depends on a paid to
 
 ## Shipping scripts (all stdlib-only, smoke-tested)
 
-`scripts/smoke_test.py` verifies the install (36/36) and `scripts/verify_release.py`
-is the release gate. The 13 CLI tools (15 scripts total, counting those two):
-`design/design_system.py`, `design/gen_palettes.py`, `design/render_page.py`,
-`design/tokens_emit.py`, `workflow/portable_html.py`, `workflow/csv_to_report.py`,
-`workflow/capability_probe.py`, `seo/schema_gen.py`, `seo/sitemap_tools.py`,
-`seo/tech_audit.py`, `seo/geo_check.py`, `seo/hreflang_tools.py`,
-`seo/drift_tools.py`.
+`scripts/smoke_test.py` verifies the install (37/37) and `scripts/verify_release.py`
+is the release gate. Every other script is a standalone CLI **and** an importable
+library (`design/match.py` is library-only, the ranker behind `design_system.py`):
+
+- **design/** — `a11y_static`, `design_system`, `gen_charts`, `gen_palettes`, `match`,
+  `render_page`, `tokens_emit`
+- **seo/** — `ai_crawlers` (the one AI-crawler registry + RFC 9309 robots evaluator),
+  `business_type`, `crawl_inventory`, `drift_baseline` / `drift_compare` /
+  `drift_history` / `drift_severity` / `drift_tools`, `geo_check`, `geogrid`,
+  `hreflang_tools`, `nap_check`, `page_fetch`, `schema_gen`, `serp_cluster`,
+  `site_map`, `sitemap_tools`, `tech_audit`
+- **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
+  `net_safety` (the one shared SSRF guard), `portable_html`
+
+Dated search facts every SEO skill relies on live in one file,
+`references/shared/search-landscape-2026.md` (reviewed quarterly).
 
 ## Promotion checklist (🟡 → ✅)
 

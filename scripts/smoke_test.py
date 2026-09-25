@@ -259,6 +259,21 @@ def main():
         check("tech_audit errors on bad input (missing file / bad URL scheme)", err_ok,
               "exit 1 + error on both" if err_ok else "silently returned exit 0 on bad input")
 
+        # ai_crawlers: the generated "citable, no training" robots block must round-trip
+        # to the best-practice verdict through the shared RFC 9309 evaluator.
+        rgen = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "ai_crawlers.py"),
+             "--generate", "citable-no-training"], capture_output=True, encoding="utf-8")
+        rp = os.path.join(td, "robots.txt")
+        open(rp, "w", encoding="utf-8").write(rgen.stdout)
+        rv = subprocess.run(py() + [os.path.join(ROOT, "scripts", "seo", "ai_crawlers.py"),
+             "--robots", rp], capture_output=True, encoding="utf-8")
+        try:
+            ai_ok = json.loads(rv.stdout).get("verdict") == "citable-training-blocked"
+        except json.JSONDecodeError:
+            ai_ok = False
+        check("ai_crawlers generate -> judge round-trips to citable-training-blocked", ai_ok,
+              "generated policy judged best-practice" if ai_ok else "round-trip verdict mismatch")
+
     passed = sum(1 for _, ok, _ in results if ok)
     total = len(results)
     print(f"\n{passed}/{total} checks passed.")

@@ -92,6 +92,10 @@ crawling (up to ~500 pages, business-type auto-detect at scale) activates when t
 
 ## Notes
 
+Current-state facts every specialist relies on (AI Overviews / AI Mode sourcing,
+retired rich results, crawl limits, spam policies) are dated in
+`references/shared/search-landscape-2026.md`; cite it rather than restating a fact.
+
 Most SEO requests should land here first; it routes to specialists. It dispatches
 real Agent-tool sub-agents in parallel (`agents/`), one per specialist leaf, and never
 claims coverage it didn't run — the "covered / not covered" list plus the

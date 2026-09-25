@@ -23,7 +23,7 @@ band at the 75th percentile. One Poor metric fails the set.
 ## INP replaced FID
 
 Interaction to Next Paint (INP) is the responsiveness metric. It supersedes the
-older First Input Paint (FID), because INP observes the latency of **every**
+older First Input Delay (FID) — retired as a Core Web Vital in March 2024 —, because INP observes the latency of **every**
 interaction during the visit (not just the first) and reports a high-percentile
 worst case, making it a stricter and more representative signal.
 
