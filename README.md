@@ -35,7 +35,7 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.10.0 "Depth Sweep").** **45 of 45 skills are Stable** — **24 Core,
+> **Shipping status (v1.10.1 "Depth Sweep").** **45 of 45 skills are Stable** — **24 Core,
 > 18 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
 > APIs, smoke-tested). Core skills are 3-layer (earned references + a deterministic
 > engine and/or real Agent-tool fan-out, each pinned by a golden example); Lite skills
@@ -66,7 +66,7 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.10.0) — 45 Stable, mostly free-tier
+## Shipping skills (v1.10.1) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
 **★ marks the 24 Core** skills (deepened this release — earned reference docs and/or a
@@ -169,21 +169,39 @@ Stable with a real free/built-in path — they just go *deeper* when you connect
 > adjacent `openai-codex` / `cc-gemini-plugin` tools), and degrade to documented
 > manual steps when neither is installed — convenience wrappers, not a hard dependency.
 
-## Architecture
+## Repository map
 
-```
-designer-pro-and-seo/
-├── .claude-plugin/          (plugin.json + marketplace.json)
-├── skills/                  (each skill its own SKILL.md)
-├── scripts/                 (shared standard-library Python helpers: seo/ design/ workflow/)
-├── data/                    (clean-room CSV libraries — see data/README.md)
-├── extensions/              (optional MCP wirings, each with setup README + .mcp.json)
-├── templates/               (prompt templates and starters)
-├── references/              (deep docs loaded on-demand; PROVENANCE ledger; engine contracts)
-├── README.md   CLAUDE.md   QUICKSTART.md
-├── LICENSE   NOTICE.md   PRIVACY.md   SUPPORT.md   CONTRIBUTING.md
-└── RELEASE-NOTES.md
-```
+Start at any folder: each one has its own README explaining what lives there and why.
+
+**Folders**
+
+| Path | What's inside |
+|---|---|
+| [`skills/`](skills/README.md) | The 45 skills, one `SKILL.md` each, catalogued by family with Core skills starred |
+| [`agents/`](agents/README.md) | 13 dispatched-leaf subagents the orchestrators fan out to, with least-privilege tools |
+| [`scripts/`](scripts/README.md) | 42 standard-library Python engines (`seo/`, `design/`, `workflow/`) plus the two release gates |
+| [`references/`](references/README.md) | On-demand knowledge: the dated search-landscape file, contracts, per-skill rubrics, golden examples |
+| [`data/`](data/README.md) | Seven clean-room CSV libraries behind the design engine, charts, CRO rules and research rubric |
+| [`templates/`](templates/README.md) | Build briefs, design briefs, the QA report and outreach starters that skills fill in |
+| [`extensions/`](extensions/README.md) | Optional MCP wirings (Playwright, Firecrawl, DataForSEO, nanobanana) and what runs without them |
+| [`tests/`](tests/README.md) | 636 stdlib test cases, including one that pins every golden example |
+| [`assets/`](assets/README.md) | Images used by this README (the banner) |
+| [`.claude-plugin/`](.claude-plugin/README.md) | `plugin.json` + `marketplace.json`, the install manifests |
+| [`.github/`](.github/) | CI (Ubuntu + Windows × Python 3.10 / 3.13), PR template, issue templates |
+
+**Files**
+
+| File | Read it when… |
+|---|---|
+| [`QUICKSTART.md`](QUICKSTART.md) | you want to install and get a first result in five minutes |
+| [`SHIPPING.md`](SHIPPING.md) | you need the source of truth for what ships and at which depth tier |
+| [`RELEASE-NOTES.md`](RELEASE-NOTES.md) | you want to know what changed in each version |
+| [`CLAUDE.md`](CLAUDE.md) / [`AGENTS.md`](AGENTS.md) | you are an AI agent (Claude / any other) working inside this repo |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | you want to open a PR, and where each kind of change belongs |
+| [`SUPPORT.md`](SUPPORT.md) | something isn't working: two-minute self-triage, then how to file |
+| [`PRIVACY.md`](PRIVACY.md) | you run this on client work: what fetches, what never does, where data stays |
+| [`NOTICE.md`](NOTICE.md) | you want the standards implemented and third-party attributions |
+| [`LICENSE`](LICENSE) | MIT |
 
 ## Dependencies
 
