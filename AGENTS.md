@@ -39,10 +39,10 @@ if they ever drift, that is a bug.
 | The user wants... | Reach for... |
 |---|---|
 | Build a website / spin up variants | `parallel-build` → `blast-prompt` → `design-system-gen` → variants |
-| Audit a site for SEO | `seo-audit` (dispatches to its sub-skills) |
+| Audit a site for SEO | `seo-audit` (dispatches to its sub-skills; for a local build, `scripts/workflow/site_audit.py` is the one-command baseline) |
 | Accessibility / WCAG check | `design-accessibility` |
 | Port a build to WordPress / GHL / Webflow | `portable-html-port` |
-| Pre-delivery / ship-readiness check | `qa-gate` |
+| Pre-delivery / ship-readiness check | `qa-gate` (static path: `scripts/workflow/qa_gate.py --report`) |
 | Review code the agent just wrote | `route-codex-review` — route to a *different* model, never self-review |
 | Whole-repo or long-file analysis | `route-gemini-context` |
 | Pick colors / fonts / a style | `design-system-gen` then `design-dimensions` |
@@ -89,10 +89,15 @@ driver: the reviewer must not be the author.
 
 ## Scripts, data, extensions
 
-- `scripts/seo/` — SEO Python helpers: schema gen/validate, sitemap tools, technical
-  audit, GEO citability, hreflang, drift. Authored from scratch; standard library only.
-- `scripts/design/` — the design-system reasoning engine (CSV-backed scoring).
-- `scripts/workflow/` — orchestrators for `parallel-build`, `qa-gate`, `csv-to-report`.
+- `scripts/seo/` — one engine per SEO specialist: technical, content, schema + entity
+  graph, sitemap + link graph, images, GEO + llms.txt + the shared AI-crawler registry,
+  hreflang, e-commerce, drift, clustering, local. Standard library only.
+- `scripts/design/` — the design-system reasoning engine (CSV-backed scoring) plus the
+  accessibility, CRO and motion audits.
+- `scripts/workflow/` — orchestrators and plumbing: `site_audit.py` (one-command SEO
+  health score), `qa_gate.py` (one-command pre-delivery gate), the score fan-in, the
+  shared SSRF guard, the cost guard, the HTML porter, the CSV profiler.
+- Every folder carries its own `README.md` — start at `README.md` → "Repository map".
 - `data/` — CSV libraries (UI styles, palettes, fonts, UX rules, product types).
 - `extensions/` — optional MCP wirings; each subfolder's README explains setup.
 - `templates/` — prompt templates skills reference (BLAST, 5-Dimensions, design-system
