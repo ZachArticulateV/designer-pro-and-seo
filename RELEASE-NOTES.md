@@ -1,5 +1,30 @@
 # Release Notes
 
+## v1.10.1 — 2026-09-29 — repository documentation pass
+
+Documentation only. No skill, script-behavior, tier or count change beyond one gate
+tweak so `agents/` can carry a README.
+- **Every top-level folder now explains itself.** New READMEs for `skills/` (a
+  45-skill catalog by family), `agents/` (who dispatches each leaf, its engine and its
+  tools), `tests/` (runners and what each file pins), `assets/` and `.claude-plugin/`.
+  Refreshed guides for `scripts/` (all 42 engines), `references/` (a navigable index),
+  `data/` (it listed a shipping CSV as roadmap), `templates/` and `extensions/` (what
+  runs when an MCP is missing).
+- **README "Repository map"** replaces the ASCII tree: every folder and root document
+  is linked with a one-line "read it when…".
+- `AGENTS.md` re-synced with `CLAUDE.md` (it had drifted); `CLAUDE.md` gains the current
+  engine map and the one-bot-list / one-dated-facts-file rules; `QUICKSTART` adds the
+  two one-command audits; `PRIVACY` lists exactly which scripts can fetch; `SUPPORT`
+  adds self-triage; `NOTICE` records the standards the engines implement; `CONTRIBUTING`
+  adds a where-things-go table; issue chooser links Quickstart + Support; bug reports
+  ask for gate output; `.gitattributes` / `.gitignore` cover AVIF/PDF/gz and the local
+  drift store.
+- `verify_release.py` treats `agents/README.md` as documentation, not an agent.
+- Each top-level entry was changed in its **own commit** with a descriptive message,
+  so GitHub's file list describes every folder and file. Merge with **Rebase and
+  merge** (or a merge commit) to keep them; a squash merge collapses them into one.
+- Gates: smoke 40/40, 636 unit tests, verify_release 56/56.
+
 ## v1.10.0 — 2026-09-25 — consolidation: one-command site audit (loop cycle 10 of 10)
 
 Closes the ten-cycle "Depth Sweep" (v1.1.0 → v1.10.0).
