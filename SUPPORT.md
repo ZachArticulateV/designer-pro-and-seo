@@ -8,6 +8,23 @@
 3. Confirm you're on a supported Claude Code version and that the plugin loaded
    (`/plugin` should list `designer-pro-and-seo`).
 
+## Quick self-triage (two minutes)
+
+From a clone of the repo (use `py` instead of `python3` on Windows):
+
+```text
+python3 scripts/smoke_test.py        # expect "40/40 checks passed."
+python3 scripts/verify_release.py    # expect every check PASS
+```
+
+- **Smoke test fails:** usually the Python version (3.10+ needed) or a partial clone.
+  The failing check names the script.
+- **Both pass but a skill misbehaves:** run that skill's bundled script by hand with
+  `--human`. Its golden example under `references/examples/<skill>/` shows the exact
+  expected output.
+- **A fetch is refused:** the SSRF guard blocks private and internal addresses on
+  purpose. Save the page and pass `--file` instead.
+
 ## Getting help
 
 - **Channel:** open an issue on GitHub —
@@ -27,7 +44,8 @@
 
 This is a **free, open-source plugin** in active development. The shipping skill
 set (see README) is the supported surface; skills marked *In development* are
-works in progress and excluded from support until released.
+works in progress and excluded from support until released (currently none: all 45
+are Stable).
 
 Help is best-effort by the maintainer and the community via GitHub — there is no
 service-level agreement.
