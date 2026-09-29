@@ -43,6 +43,20 @@ Try these in order; each hands off to the next:
 5. **Port** — "port this to GoHighLevel as single-file HTML" → `portable-html-port`.
 6. **SEO** — "check this page's SEO: <url>" → `seo-page`.
 
+### Or run the two one-command audits on a local build
+
+Point them at any folder of built HTML (from a clone, use bare `scripts/...` paths):
+
+```text
+python3 scripts/workflow/site_audit.py --dir dist/ --base-url https://client.example --human
+python3 scripts/workflow/qa_gate.py    --dir dist/ --base-url https://client.example --report
+```
+
+The first returns a weighted SEO health score, the specialists it covered (and what the
+ones it skipped would need), and one fix list merged across pages. The second returns
+the client-facing PASS / CONDITIONAL / FAIL report. Try either one on the demo build in
+`references/examples/qa-gate/build` first. It is meant to fail.
+
 ## 4. Compatibility matrix (optional tools)
 
 The shipping skills work fully without any of these. Optional tools add depth:
@@ -55,6 +69,9 @@ The shipping skills work fully without any of these. Optional tools add depth:
 | `portable-html-port` | ✅ fully | — | — |
 | `qa-gate` | ✅ (static path) | Playwright | live a11y/visual/perf verification |
 | `seo-page` | ✅ (fetch+parse) | DataForSEO; Google APIs | live rankings/keywords; real CWV field data |
+| `seo-audit` | ✅ (`site_audit.py` on a build) | Firecrawl; Google APIs; DataForSEO | full-site crawl; field CWV; backlinks + SERP data |
+| `seo-geo` | ✅ (citability, fan-out, llms.txt, crawler policy) | DataForSEO | measured AI-answer mentions |
+| `design-cro` / `design-motion` | ✅ (static audits) | Playwright | thumb-zone reach, real interaction, JS-driven motion |
 
 Optional tools are configured per `extensions/<name>/README.md`. Every skill that
 can use one **detects it at runtime** and tells you, in one line, what you'd gain —
