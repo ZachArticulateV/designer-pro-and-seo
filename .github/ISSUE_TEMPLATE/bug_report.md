@@ -16,6 +16,11 @@ labels: bug
 
 **What you expected**
 
+**Gate output** (from a clone of the repo, if you can)
+<!-- paste the last line of each; use `py` instead of `python3` on Windows -->
+- `python3 scripts/smoke_test.py` →
+- `python3 scripts/verify_release.py` →
+
 **Environment**
 - OS:
 - Python version (`py --version` / `python3 --version`):
