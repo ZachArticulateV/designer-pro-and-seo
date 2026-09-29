@@ -57,10 +57,12 @@ Never let Claude review its own substantive output. If the user says "check your
 
 ## Scripts, data, extensions
 
-- `scripts/seo/` — Python helpers for SEO: schema gen/validate, sitemap tools, technical audit, GEO citability, hreflang, drift. Written from scratch; standard library only.
-- `scripts/design/` — design system reasoning engine (CSV-backed scoring). Written from scratch.
-- `scripts/workflow/` — orchestrators for `parallel-build`, `qa-gate`, `csv-to-report`.
-- `data/` — CSV libraries (UI styles, palettes, fonts, UX rules, product types).
+- `scripts/seo/` — one engine per SEO specialist: technical, content, schema + entity graph, sitemap + link graph, images, GEO + llms.txt + the shared AI-crawler registry (`ai_crawlers.py` — never add a second bot list), hreflang, e-commerce, drift, clustering, local. Written from scratch; standard library only.
+- `scripts/design/` — design system reasoning engine (CSV-backed scoring) plus the accessibility, CRO and motion audits. Written from scratch.
+- `scripts/workflow/` — orchestrators and plumbing: `site_audit.py` (one-command SEO health score), `qa_gate.py` (one-command pre-delivery gate), `audit_aggregate.py`, the shared SSRF guard `net_safety.py` (every fetch goes through it), `cost_guard.py`, `portable_html.py`, `csv_to_report.py`.
+- `data/` — CSV libraries (UI styles, palettes, fonts, UX rules, product types, chart types, competitor rubric).
+- Dated search facts (AI Mode, crawl limits, retired rich results) live in ONE file: `references/shared/search-landscape-2026.md`. Cite it; never hard-code a dated fact in a skill body.
+- Every top-level folder has a `README.md`; `README.md` → "Repository map" links them all.
 - `extensions/` — optional MCP wirings. Each subfolder has a README explaining setup.
 - `templates/` — prompt templates referenced by skills (BLAST template, 5-Dimensions template, design system starter, etc.).
 - `references/` — deep documentation that skills load on-demand (avoids bloating SKILL.md bodies).
