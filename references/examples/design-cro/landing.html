@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Cedar Bench Co. — Custom Benches</title></head>
+<body>
+  <header><nav><a href="/">Home</a> <a href="/shop">Shop</a></nav></header>
+  <main>
+    <h1>Welcome to Cedar Bench Co.</h1>
+    <a class="btn" href="/shop">Shop benches</a>
+    <a class="btn" href="/custom">Design your own</a>
+    <a class="btn" href="/gift-cards">Gift cards</a>
+    <a class="btn" href="/newsletter">Learn more</a>
+    <h2>Custom orders</h2>
+    <p>Tell us about your space and we will quote a bench built to fit. Call us at
+    555-201-4477 or use the form below.</p>
+    <form action="/quote" method="post">
+      <input name="name" aria-label="Name" required>
+      <input type="email" name="email" aria-label="Email" required>
+      <input type="tel" name="phone" aria-label="Phone" required>
+      <input name="company" aria-label="Company" required>
+      <input name="address" aria-label="Street address">
+      <input name="city" aria-label="City">
+      <select name="wood" aria-label="Wood"><option>Cedar</option></select>
+      <textarea name="notes" aria-label="Notes"></textarea>
+      <input name="budget" aria-label="Budget">
+      <button type="submit">Submit</button>
+    </form>
+    <h2>What customers say</h2>
+    <p>"Still perfect after six winters." — Dana R., verified customer review</p>
+  </main>
+</body>
+</html>

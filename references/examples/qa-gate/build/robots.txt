@@ -1,0 +1,3 @@
+# staging robots.txt accidentally shipped to production
+User-agent: *
+Disallow: /

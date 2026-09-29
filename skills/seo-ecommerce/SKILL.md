@@ -28,16 +28,28 @@ DataForSEO-Merchant path.
 
 ## Steps
 
-1. **Audit product pages** (free path): unique, benefit-led titles + descriptions;
-   one h1; descriptive URL; internal links to category/related; review content
-   present. Run `seo-page` per key product.
-2. **Validate Product schema** via `seo-schema`: require `name` + `image`; for
-   merchant eligibility include `offers` with `price` + `priceCurrency` +
-   `availability`, plus `aggregateRating`/`review` **only when real**.
+1. **Run the product audit** on each key product page — merchant-listing eligibility
+   *and* agreement between markup and the visible page:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/product_audit.py" --file product.html --url <URL> --as-of <YYYY-MM-DD> --human
+   ```
+   P1–P14: Product/ProductGroup markup validated through `schema_gen.py`, availability,
+   GTIN/MPN/brand, return policy (Offer or Organization) and shipping details, expired
+   `priceValidUntil`, **marked-up price not visible**, **rating markup with no visible
+   rating**, **InStock vs "sold out"**, variants without a ProductGroup, H1, thin copy
+   (`references/seo-ecommerce/merchant-checks.md`).
+2. **Run the category audit** on listing, filtered and paginated URLs (pass the real
+   URL with its query string):
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/product_audit.py" --file list.html --url "<URL?color=red&page=2>" --type category --human
+   ```
+   C1–C6: self-canonical indexable facets, page N canonicalized to page 1, noindexed
+   pagination, indexable sort URLs, thin category copy, ItemList.
 3. **Image SEO** via `seo-image-audit` (product photos are conversion- and
    ranking-critical: alt, format, size, CLS).
-4. **Category/faceted strategy** — canonical handling for filters/sort, thin-variant
-   consolidation (coordinate with `seo-programmatic`).
+4. **Faceted strategy** — decide which few facets deserve indexable landing pages
+   (real demand + unique copy); canonicalize or noindex the rest (coordinate with
+   `seo-programmatic`).
 5. **Marketplace (optional).** If DataForSEO is configured, pull Google Shopping
    presence and Amazon/keyword-gap data; otherwise state what it would add and check
    feed basics manually.
@@ -51,6 +63,8 @@ DataForSEO-Merchant path.
 
 ## Dependencies
 
+- `scripts/seo/product_audit.py` (required) — product + category audit (imports schema_gen)
+- `references/seo-ecommerce/merchant-checks.md` (required) — codes, severities, scoring
 - `seo-schema` (Product schema), `seo-page` (per-product), `seo-image-audit` (images)
 - Optional: DataForSEO Merchant (Google Shopping/Amazon), `seo-programmatic` (facets)
 

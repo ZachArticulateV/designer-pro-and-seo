@@ -27,22 +27,21 @@ tools: Read, Glob, Grep, Bash
 
 ## Method
 
-Audit and generation for XML sitemaps: the script settles structure deterministically
-(well-formedness, root type, the 50,000-URL / 50 MB protocol limits, automatic
-sitemap-index splitting, absolute-URL checks) while the method layers the live
-quality gates that catch the common silent issues. Run the bundled tools:
+Audit and generation for XML sitemaps and the internal-link architecture around them.
+The scripts settle everything deterministically (codes, gates and scoring:
+`references/seo-sitemap/gates-and-architecture.md`):
 
 ```
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --validate sitemap.xml                  # structure gate
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --validate sitemap.xml --as-of <YYYY-MM-DD>   # structure + lastmod honesty + extensions
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --check-live sitemap.xml --sample 25          # gates: 4xx / redirect / noindex / canonical-elsewhere
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/link_graph.py" --dir dist/ --base-url https://site.com --sitemap sitemap.xml   # orphans, depth, broken links
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --generate --urls urls.txt --out sitemap.xml \
-  --base-url https://site.com --lastmod 2026-06-01                                                   # splits to an index past 50,000 URLs
+  --base-url https://site.com --lastmod-file lastmod.csv                                             # real per-URL lastmod; index past 50,000
 ```
 
-After structural validation, apply the live gates on a sample of the sitemap's URLs
-(via `seo-page`/fetch — a prose cross-reference): confirm each returns 200, is **not**
-noindexed, and does **not** canonicalize elsewhere; flag any that fail, since those
-silently waste crawl budget. Keep `lastmod` on real content-change dates (not
-auto-bumped to today), and confirm `robots.txt` carries a `Sitemap:` directive.
+`--check-live` fetches through the shared SSRF guard and states "fetched N of M";
+with a crawler export use `--crosscheck --pages pages.json` / `link_graph.py --edges`
+instead. Confirm `robots.txt` carries a `Sitemap:` directive.
 `site_map.py` supplies the robots + sitemap-recursion URL inventory when a fresh URL
 set is needed.
 
@@ -71,7 +70,7 @@ never-fabricate field — structure and the live gates are both observed, not gu
 capability:   site-map
 tier1:        Firecrawl MCP
 tier1_signal: FIRECRAWL_API_KEY | FIRECRAWL_API_URL
-tier2:        sitemap_tools.py (validate + generate, sitemaps.org limits) + site_map.py (robots + sitemap recursion -> URL inventory)
+tier2:        sitemap_tools.py (validate + crosscheck + generate) + link_graph.py (internal-link graph) + site_map.py (robots + sitemap recursion -> URL inventory)
 tier2_yields: validated sitemaps.org-compliant sitemap + 404/noindex/canonical offender list, zero spend
 tier3:        none
 tier3_signal: none
@@ -93,7 +92,7 @@ target:        <sitemap file/URL audited, or URL list generated from>
 findings:      <JSON array of {check, severity, finding, fix}; check in structure|url-limit|size|absolute-url|http-status|noindex|canonical|robots; severity in critical|high|medium|info>
 generated:     <path of the generated sitemap (+ index if split), or none>
 offenders:     <JSON array of URLs failing a live gate {url, reason}; reason in 404|noindex|canonical-elsewhere, or []>
-score:         null
+score:         <0-100: sitemap_tools.py validation score (crosscheck + link_graph scores reported alongside)>
 needs_tier1:   none
 handoffs:      seo-page (per-URL live gates) | none
 tier_line:     <one sentence: which tier ran + what a full crawl would add>

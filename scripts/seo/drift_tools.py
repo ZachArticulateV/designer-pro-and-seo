@@ -25,6 +25,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from net_safety import (  # noqa: E402
     safe_open, validate_url, UrlValidationError, SafeFetchError,
 )
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ai_crawlers  # noqa: E402  (AI-crawler verdict for the robots drift rule)
 
 UA = "Mozilla/5.0 (compatible; designer-pro-seo-drift/1.0)"
 
@@ -65,11 +67,14 @@ def fetch(url, timeout=10):
             pass
 
 
-def capture(html, url=None):
+def capture(html, url=None, robots=None):
+    """Snapshot the on-page SEO elements. When `robots` (robots.txt text) is supplied the
+    snapshot also records the site's AI-crawler verdict (shared ai_crawlers evaluator) so
+    drift can catch a deploy that silently blocks search engines or AI-search crawlers."""
     text = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", html)
     text = re.sub(r"(?s)<[^>]+>", " ", text)
     words = len(text.split())
-    return {
+    snap = {
         "url": url,
         "title": _find(r"<title[^>]*>(.*?)</title>", html),
         "meta_description": _find(r'<meta[^>]+name=["\']description["\'][^>]*content=["\'](.*?)["\']', html),
@@ -83,6 +88,9 @@ def capture(html, url=None):
         "h2_count": len(re.findall(r"<h2[\s>]", html, re.I)),
         "word_count": words,
     }
+    if robots is not None:
+        snap["ai_crawler_verdict"] = ai_crawlers.verdict(robots)["verdict"]
+    return snap
 
 
 def diff(baseline, current):

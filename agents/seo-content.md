@@ -66,7 +66,7 @@ and AI-answer citation share are never fabricated — emit them as a labeled
 capability:   geo-citability
 tier1:        DataForSEO MCP (LLM-mention / AI-visibility tracking)
 tier1_signal: DATAFORSEO_USERNAME | DATAFORSEO_PASSWORD
-tier2:        scripts/seo/geo_check.py --content (passage citability % + weak-passage list, no key)
+tier2:        scripts/seo/content_audit.py (8-dimension content audit + score) + geo_check.py --content (weak-passage list), no key
 tier2_yields: per-dimension E-E-A-T / citability / readability / depth / originality scores + weak passages to fix, zero spend
 tier3:        none
 tier3_signal: none
@@ -85,9 +85,9 @@ agent:        seo-content
 status:       ok | partial | error
 tier_ran:     1 | 2 | 4
 target:       <url or local content file audited>
-findings:     <JSON array of {dimension, severity, finding, fix}; dimension in eeat|citability|readability|depth|originality; severity in critical|high|medium|info>
+findings:     <JSON array of {dimension, severity, finding, fix}; dimension in eeat|structure|readability|depth|keyword|links|originality|citability; severity in critical|high|medium|info>
 citability:   <JSON {score_pct, weak_passages:[...]} from geo_check.py, or null if no content scored>
-score:        null
+score:        <0-100 content score from content_audit.py `score`>
 needs_tier1:  LLM-mention count, AI-answer citation share | none
 handoffs:     seo-geo (AI-search depth), seo-content-brief (production counterpart) | none
 tier_line:    <one sentence: which tier ran + what a higher tier would add>

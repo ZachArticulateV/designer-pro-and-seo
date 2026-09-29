@@ -35,11 +35,18 @@ decision fatigue, and mobile reality.
 
 ## Steps
 
-1. **Get the page.** Fetch the URL or read the local HTML (this is the free path).
-2. **Walk the heuristic checklist**, cross-referencing `data/ux-rules.csv` (the
-   `conversion` and `cta` tagged rules): is there exactly one primary CTA? Is the
-   value prop above the fold? How many form fields? Are trust signals near the CTA?
-   Does the headline read in ~3 seconds? Any decision fatigue / competing actions?
+1. **Run the CRO audit** on the URL (SSRF-guarded fetch) or local HTML:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/design/cro_audit.py" --file landing.html --goal lead --human   # or --url <URL>
+   ```
+   K1–K13 (`references/design-cro/cro-heuristics.md`): CTA presence and hierarchy in
+   the first screen, generic CTA labels, form length and needlessly required fields,
+   trust signals and their distance from the decision, contact path and tap-to-call,
+   headline clarity, first-screen value copy, autoplay media, long pages with one CTA.
+   Each finding cites its `data/ux-rules.csv` conversion rule and carries Impact +
+   Effort.
+2. **Judge what the script can't** — visual weight and contrast of the primary CTA,
+   whether the offer itself is compelling, message match with the ad / search intent.
 3. **Optional in-browser pass.** If Playwright is available, check thumb-zone
    reachability and real interaction; otherwise note that as a manual check.
 4. **Score each finding** by Impact (high/med/low) and Fix Effort (high/med/low).
@@ -53,8 +60,9 @@ decision fatigue, and mobile reality.
 
 ## Dependencies
 
-- None required (heuristic review of provided HTML/URL); `data/ux-rules.csv` for the
-  conversion/CTA rule set
+- `scripts/design/cro_audit.py` (required) — the K1–K13 heuristic engine
+- `data/ux-rules.csv` (required) — the conversion rule set each finding cites
+- `references/design-cro/cro-heuristics.md` (required) — catalog, leverage ranking, limits
 - Playwright (optional — adds in-browser thumb-zone/interaction checks; free path: manual thumb-zone inspection of the fetched HTML, noted in the report)
 - `copywriting` (optional — drafts copy fixes; free path: inline copy recommendation per finding)
 

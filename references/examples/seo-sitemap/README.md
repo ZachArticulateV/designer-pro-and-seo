@@ -31,33 +31,44 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/site_map.py" \
 (From the repo root during development, drop `${CLAUDE_PLUGIN_ROOT}/` and run the
 bare `scripts/...` path.)
 
+**3 — quality gates against supplied page states (`sitemap_tools.py --crosscheck`):**
+
+```
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" \
+  --crosscheck references/examples/seo-sitemap/sample-sitemap.xml \
+  --pages references/examples/seo-sitemap/pages.json
+```
+
+**4 — internal-link architecture of a 9-page static build (`link_graph.py`):**
+
+```
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/link_graph.py" \
+  --dir references/examples/seo-sitemap/site --base-url https://example.test --human
+```
+
 ## Expected free deliverable (Tier 2)
 
-A structural validation report (JSON), e.g.:
+1. **Validation:** `"valid": true`, `"url_count": 3`, `"issues": []`, `"score": 100`.
+   The sample is clean.
+2. **Inventory:**
+   ```
+   # SITEMAP / URL INVENTORY: references/examples/seo-sitemap/sample-sitemap.xml
+   mode=offline-file  source=sitemap  base=https://example.test/
+   counts: total=3 internal=3 external=0 disallowed=0
+   by page-type: home=1, page=2
+   ```
+3. **Gates: score 82/100.**
+   - G4 (high): `/benches` canonicalizes to `/benches/classic`.
+   - G2 (medium): `/care-guide` 301s to `/guides/cedar-care`.
+   - G5 (medium): `/guides/cedar-care` is indexable but missing from the sitemap.
+4. **Link graph: 9 pages, max depth 5, score 64/100.**
+   - L1 (high): orphan cedar-care guide.
+   - L3 (high): broken porch-swing link.
+   - L4 (medium): finish/stain pages 4–5 clicks deep.
+   - L5 (medium): contact is a dead end.
+   - L6 (medium): about/contact linked from nav/footer only.
+   - L7 (medium): the specs page is reached only by "Click here".
 
-```
-{
-  "action": "validate",
-  "root": "urlset",
-  "valid": true,
-  "errors": [],
-  "warnings": [],
-  "url_count": 3
-}
-```
-
-It confirms well-formedness, root type (`urlset` vs `sitemapindex`), the
-50,000-URL / 50 MB protocol limits, and that every `<loc>` is absolute http(s).
-
-`site_map.py` (command 2) extends the same Tier-2 with a robots + sitemap-recursion
-URL inventory, e.g.:
-
-```
-# SITEMAP / URL INVENTORY: references/examples/seo-sitemap/sample-sitemap.xml
-mode=offline-file  source=sitemap  base=https://example.test/
-counts: total=3 internal=3 external=0 disallowed=0
-by page-type: home=1, page=2
-```
-
-No Tier-1 connector is required (`needs_tier1: none`); Firecrawl only adds JS-only
-URL discovery (Tier 1).
+No network, no key. `tests/test_sitemap_linkgraph.py` pins all four results. A live
+`--check-live` sample or a Firecrawl crawl (Tier 1) replaces `pages.json` with real
+page states.

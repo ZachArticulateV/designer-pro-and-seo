@@ -8,18 +8,20 @@ in `scripts/seo/drift_severity.py`.
 ## The one design rule: the model is derived from what we capture
 
 The engine never invents a signal it cannot see. `scripts/seo/drift_tools.py` —
-the canonical capturer — records exactly twelve fields per snapshot:
+the canonical capturer — records exactly twelve fields per snapshot, plus a thirteenth
+when a robots.txt is supplied (`--robots`):
 
 ```
 url  title  meta_description  h1  canonical  meta_robots
 og_title  og_description  og_image  schema_blocks  h2_count  word_count
+[ai_crawler_verdict]   <- only with --robots; the shared ai_crawlers.py verdict
 ```
 
 `url` is identity, not a signal, so it never produces a change. **Every other captured
 field maps to exactly one numbered rule.** Add a field to `capture()` and you add a rule
 here; remove one and its rule goes silent. That is the whole contract: the severity model
 is a *function of the captured-element list*, authored from first principles against our
-own list — no external comparison-rules source was consulted, and the rule count (14) is
+own list — no external comparison-rules source was consulted, and the rule count (15) is
 incidental, not targeted at any outside number.
 
 ## The three tiers
@@ -37,7 +39,7 @@ is *how fast must a human look*.
 deterministic tiebreak) and tallies a per-tier count, so the worst news is always first
 and a deploy's blast radius is one glance.
 
-## The rules (D1–D14)
+## The rules (D1–D15)
 
 ### critical — de-indexing / signal-misrouting
 
@@ -47,6 +49,7 @@ and a deploy's blast radius is one glance.
 | **D2** | `meta_robots` | a `nofollow` directive is newly asserted | internal link equity stops flowing out of the page |
 | **D3** | `canonical` | a present canonical now points to a *different* URL | ranking signals get reassigned to another page |
 | **D4** | `canonical` | a present canonical is removed | the self-reference is lost; duplicate-content consolidation breaks |
+| **D15** | `ai_crawler_verdict` | robots.txt newly blocks AI-search crawlers (`retrieval-blocked`) or a classic search engine (`search-engine-blocked`) | citation and AI Overview / AI Mode visibility disappear with no on-page change — the silent 2026 deploy failure |
 
 `meta_robots` is tokenized (split on commas/whitespace, lowercased) and `none` is expanded
 to its `noindex,nofollow` meaning, so a switch to `content="none"` still trips D1. Only a
@@ -70,6 +73,7 @@ to its `noindex,nofollow` meaning, so a switch to `content="none"` still trips D
 | **D11** | `schema_blocks` | the block count *increases* | new structured data — verify it validates, but rarely a regression |
 | **D12** | `og_title` / `og_description` / `og_image` | any Open Graph value changes | social/share presentation only (one row per changed field) |
 | **D13** | `h2_count` | the subsection count changes | structural shift worth noticing, not urgent |
+| **D15** | `ai_crawler_verdict` | robots.txt moves to `retrieval-partial` (high) · or changes without reducing search/AI-search access, e.g. training bots newly blocked (advisory) | partial citation loss is serious; a training-policy change is usually deliberate |
 | **D14** | `word_count` | body text moves **more than 20%** | content materially changed; within ±20% is editing noise and suppressed |
 
 ## The two thresholds, and why they exist

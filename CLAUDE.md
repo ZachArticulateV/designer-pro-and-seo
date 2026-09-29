@@ -19,10 +19,10 @@ This file is loaded by Claude Code when working inside the `designer-pro-and-seo
 | User says... | Reach for... |
 |---|---|
 | "Build a website" / "spin up variants" | `parallel-build` → `blast-prompt` → `design-system-gen` → variants |
-| "Audit this site for SEO" | `seo-audit` (which dispatches to sub-skills) |
+| "Audit this site for SEO" | `seo-audit` (which dispatches to sub-skills; for a local build, `scripts/workflow/site_audit.py` is the one-command baseline) |
 | "Check accessibility" / "WCAG" | `design-accessibility` |
 | "Make this site work in WordPress / GHL / Webflow" | `portable-html-port` |
-| "Pre-delivery check" / "is this ready to ship" | `qa-gate` |
+| "Pre-delivery check" / "is this ready to ship" | `qa-gate` (static path: `scripts/workflow/qa_gate.py --report`) |
 | "Review this code" (after Claude wrote it) | `route-codex-review` — MUST route to Codex, never self-review |
 | "Long file analysis" / "scan the whole repo" | `route-gemini-context` |
 | "Pick colors / fonts / a style" | `design-system-gen` then `design-dimensions` |

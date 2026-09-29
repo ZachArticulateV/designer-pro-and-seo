@@ -52,7 +52,7 @@ first so we can align before you build.
 Run both gates from the repo root (use `py` instead of `python3` on Windows):
 
 ```text
-python3 scripts/smoke_test.py        # expect "36/36 checks passed."
+python3 scripts/smoke_test.py        # expect "40/40 checks passed."
 python3 scripts/verify_release.py    # expect every check PASS
 ```
 

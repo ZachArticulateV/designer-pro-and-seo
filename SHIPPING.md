@@ -7,10 +7,10 @@ with this file. (See README for the narrative version.)
 Legend: ✅ Stable (built, verified, supported) · 🟡 In development (scaffolded,
 not released, excluded from functional claims & support).
 
-Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **14 Core · 28 Lite ·
+Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **24 Core · 18 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.0.4) — 45 skills
+## ✅ Shipping (v1.10.0) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -40,12 +40,14 @@ free/built-in path — see `references/CAPABILITY-TIERS.md`.
 Orthogonal to Stable, every Stable skill also sits in one **depth tier** — the honest
 "how deep is it" signal introduced with v1 "Deep Core."
 
-- **Core (14)** — deepened this release into a real 3-layer skill: earned per-skill
-  `references/` and/or a wired dispatch layer (real Agent-tool fan-out, plus the
-  flagship differentiators). These are the skills v1 raises to a higher level.
-- **Lite (28)** — Stable, with a real free/built-in path, but single-file; slated for
-  the same depth pass in **v1.1 "Depth Sweep."** Lite means "not yet 3-layer," not
-  "lesser quality."
+- **Core (24)** — a real 3-layer skill: earned per-skill `references/`, a
+  deterministic engine and/or a wired dispatch layer (real Agent-tool fan-out), and a
+  golden example under `references/examples/` pinned by tests. v1.0 shipped 14; the
+  v1.1–v1.10 "Depth Sweep" promoted ten more (seo-technical, seo-schema, seo-page,
+  seo-content, seo-sitemap, seo-image-audit, seo-hreflang, seo-ecommerce, design-cro,
+  design-motion).
+- **Lite (18)** — Stable, with a real free/built-in path, but single-file; next in line
+  for the same depth pass. Lite means "not yet 3-layer," not "lesser quality."
 - **Routing (3)** — the three-brain hand-off skills (Claude drives; Codex reviews;
   Gemini long-context).
 
@@ -54,12 +56,12 @@ fails if any skill is missing, invented, or double-counted, so the count claim i
 mechanically un-fakeable.
 
 ```depth-tiers
-core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy
-lite:    design-dimensions, design-motion, design-system-persist, design-tokens-emit, design-cro, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-page, seo-technical, seo-schema, seo-sitemap, seo-image-audit, seo-content, seo-content-brief, seo-sxo, seo-hreflang, seo-competitor-pages, seo-programmatic, seo-ecommerce, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
+core:    design-system-gen, design-build, design-research, design-accessibility, design-visual-qa, qa-gate, parallel-build, portable-html-port, seo-audit, seo-cluster, seo-drift, seo-geo, seo-local-unified, seo-strategy, seo-technical, seo-schema, seo-page, seo-content, seo-sitemap, seo-image-audit, seo-hreflang, seo-ecommerce, design-cro, design-motion
+lite:    design-dimensions, design-system-persist, design-tokens-emit, blast-prompt, html-extract, copywriting, content-draft, csv-to-report, client-outreach, seo-content-brief, seo-sxo, seo-competitor-pages, seo-programmatic, seo-google, seo-dataforseo, seo-firecrawl, seo-backlinks, seo-image-gen
 routing: route-three-brain, route-codex-review, route-gemini-context
 ```
 
-**45 Stable = 14 Core + 28 Lite + 3 routing.**
+**45 Stable = 24 Core + 18 Lite + 3 routing.**
 
 ## 🟡 In development — 0 skills
 
@@ -75,13 +77,22 @@ web/browser tools + bundled scripts otherwise, so none hard-depends on a paid to
 
 ## Shipping scripts (all stdlib-only, smoke-tested)
 
-`scripts/smoke_test.py` verifies the install (36/36) and `scripts/verify_release.py`
-is the release gate. The 13 CLI tools (15 scripts total, counting those two):
-`design/design_system.py`, `design/gen_palettes.py`, `design/render_page.py`,
-`design/tokens_emit.py`, `workflow/portable_html.py`, `workflow/csv_to_report.py`,
-`workflow/capability_probe.py`, `seo/schema_gen.py`, `seo/sitemap_tools.py`,
-`seo/tech_audit.py`, `seo/geo_check.py`, `seo/hreflang_tools.py`,
-`seo/drift_tools.py`.
+`scripts/smoke_test.py` verifies the install (40/40) and `scripts/verify_release.py`
+is the release gate. Every other script is a standalone CLI **and** an importable
+library (`design/match.py` is library-only, the ranker behind `design_system.py`):
+
+- **design/** — `a11y_static`, `cro_audit` (CRO heuristics), `design_system`, `gen_charts`, `gen_palettes`, `match`, `motion_audit` (motion a11y + performance),
+  `render_page`, `tokens_emit`
+- **seo/** — `ai_crawlers` (the one AI-crawler registry + RFC 9309 robots evaluator),
+  `business_type`, `content_audit` (8-dimension content-quality audit), `crawl_inventory`, `drift_baseline` / `drift_compare` /
+  `drift_history` / `drift_severity` / `drift_tools`, `geo_check`, `geogrid`,
+  `hreflang_tools`, `image_audit` (image SEO + stdlib header parsing), `link_graph` (internal-link architecture), `llms_txt` (llms.txt generate/validate), `nap_check`, `page_fetch`, `product_audit` (merchant listing + category hygiene), `schema_gen`, `serp_cluster`,
+  `site_map`, `sitemap_tools`, `tech_audit`
+- **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
+  `net_safety` (the one shared SSRF guard), `portable_html`, `qa_gate` (static 9-phase gate runner), `site_audit` (one-command SEO health score)
+
+Dated search facts every SEO skill relies on live in one file,
+`references/shared/search-landscape-2026.md` (reviewed quarterly).
 
 ## Promotion checklist (🟡 → ✅)
 

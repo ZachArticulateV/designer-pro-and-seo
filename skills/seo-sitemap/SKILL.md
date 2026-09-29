@@ -1,6 +1,6 @@
 ---
 name: seo-sitemap
-description: Audits and generates sitemaps.org-compliant XML sitemaps. Validates structure (well-formed XML, the 50,000-URL / 50 MB limits, absolute URLs) and flags sampled URLs that 404, are noindexed, or canonicalize elsewhere; splits into a sitemap index automatically past 50,000 URLs. Trigger when the user says "sitemap", "XML sitemap", "generate sitemap", "validate sitemap", "sitemap issues", or "sitemap index".
+description: Audits and generates sitemaps.org-compliant XML sitemaps and the internal-link architecture around them. Validates structure and honesty (protocol limits, hosts, duplicates, lastmod format/future/auto-bumped, image/video/news/hreflang extensions), runs quality gates (4xx, redirects, noindex, canonical-elsewhere, missing pages), maps the internal link graph (orphans, click depth, broken links, dead ends, generic anchors), and generates sitemaps with real per-URL lastmod. Trigger when the user says "sitemap", "XML sitemap", "generate sitemap", "validate sitemap", "sitemap issues", or "sitemap index".
 ---
 
 # seo-sitemap
@@ -29,25 +29,42 @@ elsewhere should never be in a sitemap.
 
 ## Steps
 
-1. **Validate structure:**
+1. **Validate structure + honesty** (`.xml` or `.xml.gz`; `--as-of` enables date checks):
    ```
-   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --validate sitemap.xml
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --validate sitemap.xml --as-of <YYYY-MM-DD>
    ```
-   Checks well-formedness, root type (urlset vs sitemapindex), URL count vs the
-   50,000 limit, file size vs 50 MB, and that every `<loc>` is absolute http(s).
-2. **Apply the live quality gates** (the high-value part): for a sample of the
-   sitemap's URLs, confirm via `seo-page`/fetch that each returns 200, is **not**
-   noindexed, and does **not** canonicalize to a different URL. Flag any that fail —
-   these silently waste crawl budget.
-3. **Generate** a fresh sitemap from a URL list when needed:
+   Protocol limits (50,000 URLs / 50 MB, absolute locs, root, namespace), host and
+   scheme consistency, duplicates, fragments, tracking parameters, **lastmod honesty**
+   (format, future dates, one date stamped on everything), ignored changefreq/priority,
+   and the image / video / news / hreflang extensions. Codes S01–S26 and severities:
+   `references/seo-sitemap/gates-and-architecture.md`.
+2. **Run the quality gates** — a sitemap should list only 200, indexable,
+   self-canonical URLs. With page states from a crawl or `tech_audit.py` runs:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --crosscheck sitemap.xml --pages pages.json
+   ```
+   or let the script sample-fetch them through the shared SSRF guard (it states the
+   sampling boundary):
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --check-live sitemap.xml --sample 25
+   ```
+   Gates G1–G5: 4xx/5xx, redirects, noindex, canonical-elsewhere, and indexable pages
+   missing from the sitemap.
+3. **Audit the internal-link architecture** against the sitemap — orphans, islands,
+   click depth > 3, broken internal links, dead ends, nav-only and generic-anchor pages,
+   internal nofollow:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/link_graph.py" --dir dist/ --base-url https://site.com --sitemap sitemap.xml --human
+   ```
+   (For a live site, feed a crawler's `{page: [links]}` export via `--edges`.)
+4. **Generate** a fresh sitemap with real per-URL change dates:
    ```
    python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/sitemap_tools.py" --generate --urls urls.txt --out sitemap.xml \
-     --base-url https://site.com --lastmod 2026-06-01
+     --base-url https://site.com --lastmod-file lastmod.csv
    ```
-   It splits into a sitemap index automatically past 50,000 URLs.
-4. **Lastmod discipline:** set `lastmod` from real content-change dates, not
-   auto-bumped to today on every regen (Google learns to distrust it otherwise).
-5. **Robots:** confirm `robots.txt` has a `Sitemap:` directive pointing to it.
+   It dedupes, drops non-http(s) URLs, and splits into an index past 50,000 URLs.
+5. **Robots:** confirm `robots.txt` has a `Sitemap:` directive (the AI-crawler verdict
+   from `scripts/seo/ai_crawlers.py` lists the sitemaps it finds).
 
 ## Capability routing
 
@@ -68,7 +85,7 @@ This skill follows the plugin's capability-tier cascade
 capability:   site-map
 tier1:        Firecrawl MCP
 tier1_signal: FIRECRAWL_API_KEY | FIRECRAWL_API_URL
-tier2:        sitemap_tools.py (validate + generate, sitemaps.org limits) + site_map.py (robots + sitemap recursion -> URL inventory)
+tier2:        sitemap_tools.py (validate + crosscheck + generate) + link_graph.py (internal-link graph) + site_map.py (robots + sitemap recursion -> URL inventory)
 tier2_yields: validated sitemaps.org-compliant sitemap + 404/noindex/canonical offender list, zero spend
 tier3:        none
 tier3_signal: none
@@ -80,14 +97,17 @@ Always end by stating which tier ran and what a full crawl would add.
 
 ## Outputs
 
-- Structure validation report
-- Quality-gate results (404 / noindex / canonical-elsewhere offenders)
+- Structure + honesty validation report with a score
+- Quality-gate results (4xx / redirect / noindex / canonical-elsewhere / missing pages)
+- Internal-link architecture report (orphans, depth, broken links, anchors) with a score
 - Generated sitemap(s) + index for large sites
 
 ## Dependencies
 
-- `scripts/seo/sitemap_tools.py` (required) — Python 3.10+, standard library only
-- `seo-page` (optional — for the per-URL live quality gates)
+- `scripts/seo/sitemap_tools.py` (required) — validate / crosscheck / check-live / generate
+- `scripts/seo/link_graph.py` (required) — internal-link graph audit
+- `scripts/seo/site_map.py` (required) — robots + sitemap-recursion URL inventory
+- `references/seo-sitemap/gates-and-architecture.md` (required) — codes, gates, scoring
 
 ## Notes
 

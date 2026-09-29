@@ -35,10 +35,11 @@ claude --plugin-dir designer-pro-and-seo
 From a clone you can also run the bundled checks from the repo root —
 `python3 scripts/smoke_test.py` (use `py` on Windows).
 
-> **Shipping status (v1.0.4 "Deep Core").** **45 of 45 skills are Stable** — **14 Core,
-> 28 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
-> APIs, smoke-tested). Core skills are 3-layer (earned references + real Agent-tool
-> fan-out); Lite skills are Stable single-file, deepened next in v1.1. Every skill
+> **Shipping status (v1.10.0 "Depth Sweep").** **45 of 45 skills are Stable** — **24 Core,
+> 18 Lite, 3 routing** (real steps, real scripts/data, graceful degradation without paid
+> APIs, smoke-tested). Core skills are 3-layer (earned references + a deterministic
+> engine and/or real Agent-tool fan-out, each pinned by a golden example); Lite skills
+> are Stable single-file and get the same depth pass next. Every skill
 > that can use an external tool is **tool-aware**: it uses a dedicated MCP/CLI when
 > present and falls back to Claude's built-in web/browser tools + bundled scripts
 > otherwise (`references/CAPABILITY-TIERS.md`). Skill descriptions describe only what
@@ -65,21 +66,21 @@ quality check on the **finished** build right before hand-off. The up-front
 requirements-gathering you might think of as "questions first" is the **research** step
 at the start of the loop.)
 
-## Shipping skills (v1.0.4) — 45 Stable, mostly free-tier
+## Shipping skills (v1.10.0) — 45 Stable, mostly free-tier
 
 The whole loop runs end to end on the free tier. All 45 skills below are Stable;
-**★ marks the 14 Core** skills (deepened this release — earned reference docs and/or a
-real parallel agent fan-out). The other 28 are **Lite** (Stable and single-file, slated
+**★ marks the 24 Core** skills (deepened this release — earned reference docs and/or a
+real parallel agent fan-out). The other 18 are **Lite** (Stable and single-file, slated
 for the same depth pass in v1.1), and 3 are **routing** helpers.
 
 **Design (10)**
 - ★ `design-system-gen` — generate a full design system: pattern, style, WCAG-safe palette, type pairing, effects.
 - `design-dimensions` — structure a design brief around 5 core dimensions (layout, style, color, type, motion).
-- `design-motion` — emit real CSS/JS motion (entrances, scroll, micro-interactions) from motion tokens.
+- ★ `design-motion` — motion code with a reduced-motion guard every time, plus a motion audit (layout-property animation, transition:all, infinite loops, removed focus rings).
 - `design-system-persist` — save a design system to disk so later sessions reuse it.
 - ★ `design-build` — generate distinctive, production-grade frontend UI from a design system.
 - `design-tokens-emit` — export a design system as CSS / Tailwind / SCSS / Style-Dictionary tokens.
-- `design-cro` — heuristic conversion review of a landing/funnel page (CTA, above-fold, forms, trust signals).
+- ★ `design-cro` — CRO heuristic engine (CTA hierarchy, form friction, trust proximity, tap-to-call, headline clarity) ranked by impact ÷ effort, citing the UX rule set.
 - ★ `design-accessibility` — audit HTML against WCAG 2.2 (alt text, heading order, labels, contrast, landmarks).
 - ★ `design-research` — competitive research on a site + its rivals → a scored intelligence report.
 - ★ `design-visual-qa` — screenshot baselines across viewports/browsers, then diff to catch rendering regressions.
@@ -106,22 +107,22 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 
 **SEO (23)**
 - ★ `seo-audit` — orchestrates a multi-specialist audit → one weighted health score + prioritized fix list.
-- `seo-page` — single-URL SEO review (on-page, meta, schema, images, links) in one pass.
-- `seo-technical` — 9-category technical audit (crawl, index, security, mobile, Core Web Vitals, JS render).
-- `seo-schema` — detect / validate / generate Schema.org JSON-LD structured data.
-- `seo-sitemap` — audit and generate sitemaps.org-compliant XML sitemaps.
-- `seo-image-audit` — audit page images (alt, size, WebP/AVIF, srcset, lazy-load, CLS-safe dimensions).
-- `seo-content` — content quality + E-E-A-T + AI-citation-readiness analysis.
+- ★ `seo-page` — single-URL SEO review (on-page, meta, schema, images, links) in one pass.
+- ★ `seo-technical` — 10-dimension technical audit with a fix per finding + a lab score (crawl & AI-crawler policy, index incl. 2 MB limit, security, mobile, CWV lab risks, JS render).
+- ★ `seo-schema` — JSON-LD from HTML: nested-value validation (offers, returns, ratings), a cross-page `@id` entity-graph check, a linked site-graph starter, retired-rich-result flags, and a score.
+- ★ `seo-sitemap` — sitemap validation + lastmod honesty + quality gates (4xx / noindex / canonical) + an internal-link graph (orphans, click depth, broken links) + generation.
+- ★ `seo-image-audit` — image SEO audit: alt quality, WebP/AVIF, srcset/sizes, LCP loading, CLS, real byte + pixel budgets from the files, og:image, conversion commands.
+- ★ `seo-content` — content quality + E-E-A-T + AI-citation-readiness analysis.
 - `seo-content-brief` — competitive content briefs (headings, word counts, entities, links) from top-rankers.
 - ★ `seo-geo` — optimize content to be cited by AI answer engines (AI Overviews, ChatGPT, Perplexity).
 - ★ `seo-strategy` — plan multi-month SEO as a six-stage evidence loop, by business type.
 - ★ `seo-cluster` — SERP-overlap topic clustering into hub-and-spoke content architecture.
 - `seo-sxo` — search-experience optimization: detect page-type / intent mismatches by persona.
-- `seo-hreflang` — validate / generate hreflang for international SEO.
+- ★ `seo-hreflang` — hreflang code rules + a cross-page cluster audit (return links, x-default, html lang, noindex/canonical conflicts) + generation.
 - ★ `seo-drift` — git-for-SEO: baseline on-page elements and diff to catch deploy regressions.
 - `seo-competitor-pages` — generate "X vs Y" / "alternatives" comparison pages with schema.
 - `seo-programmatic` — plan + safeguard SEO for pages generated at scale (templates, thin-content gates).
-- `seo-ecommerce` — product/category SEO: Product schema, image SEO, faceted/canonical strategy.
+- ★ `seo-ecommerce` — merchant-listing audit (markup vs visible price / rating / stock, returns, shipping, variants) + facet and pagination index hygiene.
 - ★ `seo-local-unified` — local SEO: Google Business Profile, NAP consistency, citations, reviews, LocalBusiness schema.
 - `seo-google` — real Google field data (Search Console, PageSpeed/CrUX) when connected.
 - `seo-dataforseo` — live SERP / keyword / backlink / AI-visibility data via the DataForSEO MCP.
@@ -129,13 +130,30 @@ for the same depth pass in v1.1), and 3 are **routing** helpers.
 - `seo-backlinks` — backlink profile: referring domains, anchors, toxic flags, competitor gap.
 - `seo-image-gen` — generate SEO-ready images (OG, heroes, infographics, favicons) at correct dimensions.
 
-Backed by **32 scripts** — all standard-library-only Python (13 of them are CLI tools).
+Backed by **42 scripts** — all standard-library-only Python; every one but the design
+ranker library is also a runnable CLI.
 "Standard-library-only" means they use only what ships with Python, so there is
 **nothing to `pip install`**. They include the design engine + palette generator, page
-renderer, token emitter, HTML porter, CSV profiler, capability probe, a shared SSRF
-guard + guarded page fetcher, and the SEO tools (schema, sitemap, tech-audit, GEO,
-hreflang, drift, clustering, local), plus a smoke test and the release verifier. From a
-clone, `python3 scripts/smoke_test.py` verifies them. See **QUICKSTART.md**.
+renderer, token emitter, CRO and motion audits, HTML porter, CSV profiler, capability
+probe, a shared SSRF guard + guarded page fetcher, and the SEO engines (technical,
+content, schema + entity graph, sitemap + link graph, images, GEO + llms.txt + AI
+crawlers, hreflang, e-commerce, drift, clustering, local), plus a smoke test and the
+release verifier. From a clone, `python3 scripts/smoke_test.py` verifies them. See
+**QUICKSTART.md**.
+
+### Two one-command audits over a static build
+
+```
+python3 scripts/workflow/site_audit.py --dir dist/ --base-url https://site.com --human     # SEO health score + one fix list
+python3 scripts/workflow/qa_gate.py    --dir dist/ --base-url https://site.com --report    # pre-delivery PASS / CONDITIONAL / FAIL
+```
+
+`site_audit.py` runs every SEO engine that applies, scores each specialist, rolls them
+up re-normalized over what actually ran, says what it did **not** cover (and what that
+needs), and merges findings across pages. `qa_gate.py` runs the same engines plus a
+secret scan and deployment checks, and fills the client-facing QA template. Every
+current-state search fact they rely on is dated in
+`references/shared/search-landscape-2026.md`.
 
 ## Tool-aware, not paid-gated
 

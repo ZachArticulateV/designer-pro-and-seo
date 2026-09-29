@@ -3,7 +3,7 @@
 
 A deterministic, stdlib-only severity model for on-page SEO drift. Its rules are
 DERIVED FROM EXACTLY which elements `drift_tools.capture()` already records -- nothing
-else. Every captured field maps to one numbered rule (D1..D14) in one of three tiers:
+else. Every captured field maps to one numbered rule (D1..D15) in one of three tiers:
 
     critical  -- a change that can DE-INDEX the page or hand its ranking signals to a
                  different URL (robots noindex/nofollow gained; canonical flipped or
@@ -28,6 +28,9 @@ import sys
 
 # Three tiers, most-urgent first. Used for the stable sort and the per-tier tally.
 SEVERITY_ORDER = {"critical": 0, "high": 1, "advisory": 2}
+# ai_crawlers verdicts ranked by how much search / AI-search visibility they remove.
+VERDICT_RANK = {"fully-open": 0, "citable-training-partial": 0, "citable-training-blocked": 0,
+                "retrieval-partial": 1, "retrieval-blocked": 2, "search-engine-blocked": 3}
 
 # Word-count noise floor (fraction of the baseline count). A body-text change within
 # +-WORD_NOISE of the baseline is ordinary editing churn, not drift, and is suppressed.
@@ -143,6 +146,20 @@ def evaluate(baseline, current, word_noise=WORD_NOISE):
             add("word_count", "D14", "advisory", wb, wc,
                 "Body word count moved %d%% (> %d%% noise floor) -- content materially changed."
                 % (round(ratio * 100), round(word_noise * 100)))
+
+    # --- ai_crawler_verdict (D15) -- robots.txt AI/search visibility ---------------
+    ab, ac = baseline.get("ai_crawler_verdict"), current.get("ai_crawler_verdict")
+    if ab is not None and ac is not None and ab != ac:
+        rb_, rc_ = VERDICT_RANK.get(ab, 0), VERDICT_RANK.get(ac, 0)
+        if rc_ > rb_:
+            tier = "critical" if rc_ >= VERDICT_RANK["retrieval-blocked"] else "high"
+            add("ai_crawler_verdict", "D15", tier, ab, ac,
+                "robots.txt now blocks more of search / AI search -- %s. Citation and "
+                "AI Overview visibility can vanish without any on-page change." % ac)
+        else:
+            add("ai_crawler_verdict", "D15", "advisory", ab, ac,
+                "AI-crawler policy changed without reducing search / AI-search access "
+                "(e.g. training bots newly blocked or allowed) -- confirm intent.")
 
     changes.sort(key=lambda c: (SEVERITY_ORDER.get(c["severity"], 9), c["element"]))
     counts = {tier: sum(1 for c in changes if c["severity"] == tier)

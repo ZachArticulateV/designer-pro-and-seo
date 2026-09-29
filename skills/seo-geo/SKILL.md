@@ -44,18 +44,34 @@ study, Aggarwal et al., KDD 2024).
    the passage rubric, and the crawler-verdict semantics.
 2. **Passage citability** — rewrite the weak passages it lists so each leads with one
    specific, sourced claim (number/date/named source) that survives extraction.
-3. **llms.txt** — if absent, create a Markdown `/llms.txt` summarizing the site's
-   key pages for LLMs.
-4. **AI-crawler access** — read the checker's crawler-policy **verdict**
+3. **Query fan-out coverage** — AI Mode splits a query into sub-questions and cites a
+   passage per sub-question. List the sub-questions the page should answer (PAA,
+   `seo-cluster` output, sales/support FAQs, comparisons, costs) one per line, then:
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/geo_check.py" --content page.html --questions subqs.txt --human
+   ```
+   Each uncovered question lists its missing terms — the brief for the passage to
+   add. It is a lexical proxy (`references/seo-geo/ai-surfaces-2026.md`), so read the
+   covered answers too.
+4. **llms.txt** — generate a curated, valid one and check it (it is low-confidence,
+   so it is weighted lightest):
+   ```
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/llms_txt.py" --from-urls key-urls.txt --name "Site" --summary "..." --out llms.txt
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/seo/llms_txt.py" --validate llms.txt --human
+   ```
+   Pass `--llms llms.txt` to `geo_check.py` to score a local file offline.
+5. **AI-crawler access** — read the checker's crawler-policy **verdict**
    (`citable-training-blocked` is best practice; `retrieval-blocked` is the
    anti-pattern). Ensure retrieval bots (OAI-SearchBot, PerplexityBot,
    Claude-SearchBot) are allowed so the site stays citable, even if training
    crawlers are blocked.
-5. **Structured data** — add Article/Organization/Breadcrumb schema via `seo-schema`.
-6. **Brand mentions** — recommend earning mentions on sources LLMs trust; if the
+6. **Structured data** — add Article/Organization/Breadcrumb schema via `seo-schema`.
+7. **Brand mentions** — recommend earning mentions on sources LLMs trust; if the
    DataForSEO extension is present, pull LLM-mention tracking, else note it.
-7. **Render** platform-specific action items (AI Overviews favors structured,
-   sourced answers; Perplexity favors fresh, citation-dense pages).
+8. **Render** platform-specific action items per surface (AI Overviews, AI Mode,
+   ChatGPT search, Perplexity, Claude, Copilot — see
+   `references/seo-geo/ai-surfaces-2026.md`), and recommend guarding the access layer
+   with `seo-drift --robots` (rule D15).
 
 ## Capability routing
 
@@ -114,6 +130,9 @@ DataForSEO / AI-visibility MCP).
 ## Dependencies
 
 - `scripts/seo/geo_check.py` (required) — Python 3.10+, standard library only
+- `scripts/seo/llms_txt.py` (required) — llms.txt generate / validate (imported by geo_check)
+- `scripts/seo/ai_crawlers.py` (required, imported) — shared AI-crawler verdict
+- `references/seo-geo/ai-surfaces-2026.md` (required) — per-surface playbook + fan-out method
 - `seo-schema` (structured data); optional DataForSEO (LLM-mention tracking)
 - Related: `seo-content` (shares the citability lens; one-directional graph)
 
@@ -122,5 +141,9 @@ DataForSEO / AI-visibility MCP).
 "AI visibility" here means **optimizing** content to get cited (the free, on-page
 path); to **measure/track** LLM mentions with hard data, use `seo-dataforseo` (paid MCP).
 
-GEO moves fast — refresh the llms.txt guidance and AI-crawler list periodically.
+GEO moves fast — the AI-crawler list lives in one place, `scripts/seo/ai_crawlers.py`
+(`--list` prints it; `--generate citable-no-training` emits a ready robots.txt block),
+and the dated landscape facts (AI Overviews / AI Mode sourcing, Google-Extended scope,
+llms.txt confidence) live in `references/shared/search-landscape-2026.md`. Refresh both
+quarterly.
 The checker degrades gracefully offline (score content with `--content` alone).

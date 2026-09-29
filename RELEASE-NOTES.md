@@ -1,5 +1,258 @@
 # Release Notes
 
+## v1.10.0 — 2026-09-25 — consolidation: one-command site audit (loop cycle 10 of 10)
+
+Closes the ten-cycle "Depth Sweep" (v1.1.0 → v1.10.0).
+- **New `scripts/workflow/site_audit.py`** — the seo-audit orchestrator's local path in
+  one command: runs every applicable engine over a static build (tech, content, schema +
+  entity graph, images, GEO, sitemap + link graph, and — when the signals exist —
+  e-commerce and hreflang), maps each to its specialist score, rolls up with
+  `audit_aggregate.py` (re-normalized over what ran), lists what it did **not** cover and
+  what that needs, and merges findings across pages into one ordered fix list (values
+  that differ only by number are merged and flagged `varies_by_page`). Page types come
+  from the URL classifier so article-only E-E-A-T rules don't fire on home/about pages.
+- `seo-audit` gains the one-command baseline step; the dispatch matrix documents where
+  every specialist's score comes from; README gains the two one-command audits;
+  SHIPPING's tier narrative is updated (24 Core after ten promotions); stale
+  "9-category" / "deepened next in v1.1" copy fixed; the dated landscape file logs
+  which engines now encode each fact.
+- Gates: smoke 40/40 (new site_audit check), 636 unit tests (+7 in
+  `tests/test_site_audit.py`), verify_release 56/56.
+
+### Depth Sweep summary (v1.1 → v1.10)
+- 14 → **24 Core** skills; **33 → 42** stdlib scripts; smoke **36 → 40**; unit tests
+  **478 → 636**; every new engine pinned by a golden example.
+- New engines: `ai_crawlers`, `content_audit`, `llms_txt`, `link_graph`, `image_audit`,
+  `product_audit`, `cro_audit`, `motion_audit`, `qa_gate`, `site_audit`; deep rewrites of
+  `tech_audit`, `schema_gen`, `sitemap_tools`, `hreflang_tools`, `geo_check`, drift (D15).
+- Bugs fixed along the way: plain `http://` links reported as mixed content; the schema
+  agent advertising a `--graph-check` mode that did not exist; Markdown with inline HTML
+  read as zero-word HTML; `x-default` counted as a hreflang self-reference / return link;
+  "First Input Paint" (FID) naming; a promised sitelinks search box that Google removed.
+
+## v1.9.0 — 2026-09-25 — design depth + a real qa-gate runner (loop cycle 9 of 10)
+
+**24 Core · 18 Lite · 3 routing.** `design-cro` and `design-motion` become Core, and the
+mandatory pre-delivery gate becomes one command.
+- **New `scripts/workflow/qa_gate.py`** — the static path of the 9-phase gate. Runs the
+  plugin's own engines (`a11y_static`, `tech_audit`, `image_audit`, `content_audit`,
+  `schema_gen`, `link_graph`) over every page of a build, adds an **exposed-secret scan**
+  (AWS / Stripe live / GitHub / Slack / private keys; Google keys flagged to verify
+  restriction) and **deployment checks** (staging `Disallow: /` left on, robots Sitemap
+  line, sitemap.xml, 404 page, favicon, analytics tag), functional checks (broken
+  internal links, `href="#"`, action-less forms, missing image files), merges repeats
+  across pages, applies the template's verdict rule (any critical ⇒ FAIL / NO), rates
+  risk, estimates fix hours, and renders `templates/qa-report-template.md`
+  (`--report`, `--as-of` for reproducible dates). Phases 2 and 8 are marked
+  `N/A — needs Playwright`, never faked.
+- **New `scripts/design/cro_audit.py`** — K1–K13 conversion heuristics (CTA presence +
+  hierarchy in the first screen, generic labels, form length and needlessly required
+  fields, trust signals and their proximity to the decision, tap-to-call, headline
+  clarity, value copy, autoplay, long-page CTA), ranked by impact ÷ effort and citing
+  the `data/ux-rules.csv` conversion rule each enforces.
+- **New `scripts/design/motion_audit.py`** — M1–M9: missing reduced-motion guard,
+  layout-property animation, `transition: all`, over-long UI motion, infinite
+  animations / autoplay video without a stop (WCAG 2.2.2), un-reset smooth scroll,
+  removed focus outlines without `:focus-visible` (WCAG 2.4.7), untokenized timing.
+- New references `references/design-cro/cro-heuristics.md`,
+  `references/design-motion/motion-rubric.md`; golden examples for qa-gate (FAIL /
+  Critical), design-cro (60/100), design-motion (60/100) — all pinned.
+- Gates: smoke 39/39 (new qa_gate golden-build check), 629 unit tests (+13 in
+  `tests/test_design_qa.py`), verify_release 56/56.
+
+## v1.8.0 — 2026-09-25 — seo-hreflang + seo-ecommerce promoted to Core (loop cycle 8 of 10)
+
+**22 Core · 20 Lite · 3 routing.**
+- **`hreflang_tools.py`**: the full ISO 639-1 list, ISO 15924 script subtags
+  (`zh-Hant-TW`), and fix-it hints for the classic mistakes (`en-uk`→`GB`, `jp`→`ja`,
+  numeric `es-419`, `EU`). New **`--cluster`** audit across pages (manifest
+  `{url: file}` or files with canonicals): missing annotations, invalid codes,
+  self-reference, **return links**, one code per URL, x-default presence +
+  consistency, `<html lang>` agreement, noindex alternates, cross-locale canonicals —
+  codes H1–H12 with a score. `x-default` is correctly excluded from self-reference and
+  return-link checks (caught by the new tests).
+- **New `scripts/seo/product_audit.py`**: merchant-listing readiness with
+  **markup-vs-page agreement** (price visible — cents must match, rating visible,
+  InStock vs "sold out"), expired `priceValidUntil`, availability, GTIN/MPN/brand,
+  return policy (Offer or Organization) and shipping details, variants without a
+  ProductGroup, H1, thin copy (P1–P14, reusing `schema_gen.py`); category hygiene —
+  self-canonical indexable facets, page N → page 1 canonicals, noindexed pagination,
+  indexable sort URLs, thin category copy, ItemList (C1–C6).
+- New references `references/seo-hreflang/cluster-rules.md` and
+  `references/seo-ecommerce/merchant-checks.md`; golden examples for both (hreflang
+  68/100; product 40/100, category 86/100 — pinned).
+- Gates: smoke 38/38, 616 unit tests (+15 in `tests/test_hreflang_commerce.py`),
+  verify_release 56/56.
+
+## v1.7.0 — 2026-09-25 — seo-image-audit promoted to Core (loop cycle 7 of 10)
+
+**20 Core · 22 Lite · 3 routing.** Image SEO moves from a by-hand checklist to an engine.
+- **New `scripts/seo/image_audit.py`** — per-finding-type audit listing the affected
+  images: alt quality (missing, decorative without `alt=""`, **linked image with empty
+  alt = nameless link**, file name as alt, "image of…", > 125 chars, keyword-stuffed,
+  reused), legacy formats without a WebP/AVIF alternative (`<picture>` / srcset aware),
+  `srcset` missing or without `sizes`, LCP loading (lazy hero, several / no
+  `fetchpriority=high`, below-fold not lazy), CLS dimensions, camera/hash file names,
+  and `og:image`. With `--assets` it reads **real bytes and intrinsic pixels from the
+  image headers** (PNG, GIF, JPEG, WebP VP8/VP8L/VP8X, AVIF — pure stdlib, traversal
+  guarded) for byte budgets, oversize and aspect-mismatch checks; without it those land
+  in `needs_data` instead of being guessed. Emits `cwebp` / `avifenc` / `magick`
+  commands; never converts files. Score 0-100.
+- The `seo-image-audit` agent moves from WebFetch to the bundled SSRF-guarded fetcher
+  (least privilege preserved) and now reports a real score.
+- New `references/seo-image-audit/image-rubric.md`; golden example
+  `references/examples/seo-image-audit/` with generated PNG assets (48/100, pinned).
+- Gates: smoke 38/38, 601 unit tests (+12 in `tests/test_image_audit.py`),
+  verify_release 56/56.
+
+## v1.6.0 — 2026-09-25 — seo-sitemap promoted to Core + internal-link graph (loop cycle 6 of 10)
+
+**19 Core · 23 Lite · 3 routing.** The "live quality gates" step that used to be manual
+is now a script, and internal linking gets its own engine.
+- **`sitemap_tools.py`**: `.xml.gz` support; host / scheme / duplicate / fragment /
+  tracking-parameter hygiene; **lastmod honesty** (W3C format, future dates with
+  `--as-of`, >90% identical = auto-bumped); changefreq/priority flagged as ignored;
+  image / video / news (1,000 cap, 2-day freshness) / hreflang `xhtml:link` (absolute,
+  self + return links) extension checks; codes S01–S26 with a score. New
+  **`--crosscheck`** quality gates against page states (G1 4xx/5xx, G2 redirect, G3
+  noindex, G4 canonical-elsewhere, G5 indexable page missing) and **`--check-live`**
+  (SSRF-guarded sample fetch that states "fetched N of M"). `--generate` dedupes,
+  accepts real per-URL dates via `--lastmod-file`, and warns on a blanket `--lastmod`.
+- **New `scripts/seo/link_graph.py`** — internal-link graph from a static build
+  (`--dir`) or a crawler export (`--edges`): orphans, islands unreachable from home,
+  BFS click depth (> 3 flagged), broken internal targets (downgraded to info when the
+  page set is incomplete), dead ends, nav/footer-only pages, generic-anchor-only pages,
+  internal nofollow, sitemap parity. Codes L0–L10 with a score.
+- New `references/seo-sitemap/gates-and-architecture.md`; the golden example gains a
+  9-page static site + `pages.json` (gates 82/100, link graph 64/100 — pinned).
+- Gates: smoke 38/38, 589 unit tests (+14 in `tests/test_sitemap_linkgraph.py`),
+  verify_release 56/56.
+
+## v1.5.0 — 2026-09-25 — seo-page + seo-content promoted to Core (loop cycle 5 of 10)
+
+**18 Core · 24 Lite · 3 routing.** Both skills now run a real, deterministic engine
+instead of a by-hand checklist.
+- **New `scripts/seo/content_audit.py`** — HTML / Markdown / text in; eight dimensions
+  out, each finding with a fix, plus a 0-100 content score:
+  E-E-A-T observable signals (author via meta / schema / `rel=author` / byline,
+  credentials or expert review — **required on YMYL pages, auto-detected**, publish /
+  updated dates, staleness with `--as-of`, statistics without an outbound source,
+  first-hand markers, About/Contact), structure (H1, heading skips, H2 on long pages),
+  readability (sentence length, long sentences, walls of text, Flesch), depth floors per
+  page type (article / product / local / home / category), keyword placement + stuffing,
+  in-content internal links (nav/footer excluded) + generic anchors, and the
+  scaled-content tells — **leaked template placeholders (critical)**, filler phrasing,
+  duplicated sentences — plus passage citability via `geo_check`. Never labeled
+  "AI-written"; never presented as Google's E-E-A-T score. `--url` fetches through the
+  shared SSRF guard.
+- `seo-page` now runs `tech_audit.py` + `content_audit.py` (two scores); its agent moves
+  from WebFetch to the bundled SSRF-guarded fetchers (least privilege preserved).
+  `seo-content` runs the audit, then judges what a script can't (claim accuracy,
+  relevance of credentials, intent fit). Agent contracts report the real score.
+- New `references/seo-content/content-rubric.md`; golden example
+  `references/examples/seo-content/` (a YMYL article, 13/100, pinned).
+- Gates: smoke 38/38, 575 unit tests (+16 in `tests/test_content_audit.py`),
+  verify_release 56/56.
+
+## v1.4.0 — 2026-09-25 — AI-search visibility depth (loop cycle 4 of 10)
+
+Access → coverage → extractability: the three things that decide whether an AI answer
+surface cites a page, each now measured.
+- **New `scripts/seo/llms_txt.py`** — generate (`--generate site.json`, or
+  `--from-urls` grouping by path segment) and validate llms.txt against the public
+  proposal's structure (one H1 first, blockquote summary, H2 link lists, absolute
+  URLs, duplicates, empty sections, size) with a 0-100 score. `geo_check.py` now scores
+  the llms_txt category from this structural validation (invalid → capped at 60)
+  instead of "has a `#`", and accepts `--llms FILE` offline.
+- **Query fan-out coverage** — `geo_check.py --questions subqs.txt` finds the best
+  passage per AI Mode sub-question and reports covered / missing terms (a stated
+  lexical proxy; covered rows also say whether the answering passage is citable).
+- **seo-drift rule D15** — `drift_baseline.py` / `drift_compare.py --robots` snapshot the
+  shared AI-crawler verdict; a deploy that blocks AI-search crawlers or a search engine
+  is **critical**, a partial block **high**, a training-only change advisory.
+- New `references/seo-geo/ai-surfaces-2026.md` (per-surface playbook: AI Overviews,
+  AI Mode, ChatGPT search, Perplexity, Claude, Copilot; fan-out method; honest AI
+  visibility measurement). seo-geo gains the fan-out and llms.txt steps.
+- Gates: smoke 38/38 (new llms_txt generate→validate), 559 unit tests (+16 in
+  `tests/test_ai_visibility.py`), verify_release 56/56.
+
+## v1.3.0 — 2026-09-25 — seo-schema promoted to Core (loop cycle 3 of 10)
+
+`seo-schema` becomes a 3-layer Core skill (**16 Core · 26 Lite · 3 routing**).
+- **`schema_gen.py` rewritten**: `@graph` flattening (wrapper `@context` inherited),
+  nested-value validation (Product → Offer → OfferShippingDetails /
+  MerchantReturnPolicy, ratings, reviews — `itemReviewed` implied when nested),
+  **one-of requirement groups** (Product needs offers/review/aggregateRating), value
+  rules (ISO 8601 dates, `dateModified ≥ datePublished`, absolute URLs, plain-number
+  price, ISO 4217 currency, schema.org availability/condition enums, rating bounds,
+  breadcrumb 1..N order), subtype inheritance (BlogPosting → Article, 40+ LocalBusiness
+  subtypes), and a deterministic 0-100 score over `{type, severity, property, finding,
+  fix}` issues.
+- **New modes:** `--html` (extract + validate every ld+json block), `--graph` /
+  `--graph-check` (cross-page `@id` entity graph: dangling refs, conflicting types,
+  split Organization, missing hubs), `--site` (linked Organization → WebSite → WebPage →
+  BreadcrumbList starter, self-validated). The agent's advertised `--graph-check` now
+  actually exists — previously the doc promised a mode the script did not have.
+- **Type coverage for 2026:** ProductGroup, MerchantReturnPolicy (org-level),
+  OfferShippingDetails, AggregateOffer, ProfilePage, DiscussionForumPosting, QAPage,
+  Recipe, JobPosting, SoftwareApplication, ImageObject, ItemList, Dataset (Dataset
+  Search only); retired displays flagged info (FAQ 2026-05-07, HowTo, Course Info,
+  Claim Review, Estimated Salary, Special Announcement, Vehicle Listing, practice
+  problems).
+- New `references/seo-schema/entity-graph.md`; schema catalog extended; new golden
+  example `references/examples/seo-schema/` (validation 68/100, graph 90/100 — pinned).
+- Gates: smoke 37/37, 543 unit tests (+19 in `tests/test_schema_gen.py`),
+  verify_release 56/56.
+
+## v1.2.0 — 2026-09-25 — seo-technical promoted to Core (loop cycle 2 of 10)
+
+`seo-technical` becomes a real 3-layer Core skill (**15 Core · 27 Lite · 3 routing**).
+- **`tech_audit.py` rewritten on `html.parser`** into a 10-dimension audit where every
+  finding is a `{dimension, severity, finding, fix}` record, plus a deterministic
+  **lab score** (100 − 25/critical − 10/high − 4/medium over observed signals only; field
+  CWV stays `needs_tier1`). The `seo-technical` agent now returns that score instead of
+  `null`, so the audit orchestrator can weight it.
+- New checks: `X-Robots-Tag` / `googlebot` noindex, noindex+canonical conflict,
+  nosnippet (AI Overview opt-out), multiple / relative / cross-host canonicals,
+  **Googlebot's 2 MB uncompressed index limit**, doctype, charset, hreflang x-default,
+  zoom-disabled viewport, JSON-LD parse errors + retired rich-result types (from
+  `schema_gen.SPEC`), render-blocking head scripts, lazy-loaded LCP image, missing
+  image dimensions (CLS), oversized inline JSON, client-rendered shell and JS-only
+  links, Open Graph completeness, URL structure (case, params, session ids), redirect
+  hops.
+- **Bug fix:** a plain `<a href="http://…">` was reported as HIGH mixed content; only
+  `http://` sub-resources are mixed content now (links are info).
+- New `references/seo-technical/check-catalog.md` (checks, severity rationale, score
+  formula, worked example); richer golden example (scores 64/100, pinned by test).
+- Gates: smoke 37/37, 524 unit tests (+24 in `tests/test_tech_audit.py`),
+  verify_release 56/56.
+
+## v1.1.0 — 2026-09-25 — 2026 search currency (loop cycle 1 of 10)
+
+First cycle of the "gold standard" pass: make every SEO fact current as of
+September 2026 and give AI-crawler policy one source of truth.
+- **New `scripts/seo/ai_crawlers.py`** — the one AI-crawler registry (four classes:
+  search engine / AI search / user-triggered / training, with core flags) plus an
+  **RFC 9309** robots.txt evaluator (group merge, specific-over-`*`, longest match,
+  Allow wins ties, `*`/`$` wildcards) and a policy generator
+  (`--generate citable-no-training`). `geo_check.py` and `tech_audit.py` now import
+  it instead of carrying two diverging bot lists.
+- **New verdict `search-engine-blocked`** (critical): a blocked Googlebot/Bingbot also
+  removes AI Overviews / AI Mode / Copilot visibility; the GEO scorecard zeroes crawler
+  access for it. User-triggered fetchers (ChatGPT-User, Claude-User, Perplexity-User)
+  are judged as their own class; the Google-Extended scope note is emitted when it is
+  blocked (it does not control AI Overviews).
+- **New `references/shared/search-landscape-2026.md`** — dated fact sheet (AI Mode,
+  2 MB Googlebot index limit, FAQ rich-result end on 2026-05-07, HowTo / sitelinks
+  search box / 2025-retired features, spam policies incl. the August 2026 spam update,
+  crawler classes, llms.txt confidence), cited by seo-audit / seo-technical / seo-geo.
+- Fixes: "First Input Paint" → First Input *Delay* in `cwv-thresholds.md`; the schema
+  catalog and `schema_gen.py` no longer promise a sitelinks search box; `HowTo` is now
+  flagged as a retired rich result; SHIPPING's stale "13 CLI tools" list replaced with
+  the real per-folder script inventory.
+- Gates: smoke 37/37 (new ai_crawlers generate→judge round-trip), 500 unit tests
+  (+22 in `tests/test_ai_crawlers.py`), verify_release 56/56.
+
 ## v1.0.4 — 2026-07-05 — open contribution workflow
 
 Community contributions are now first-class (no code, skill, or gate change):

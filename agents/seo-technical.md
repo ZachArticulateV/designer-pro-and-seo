@@ -1,6 +1,6 @@
 ---
 name: seo-technical
-description: Dispatched leaf for technical-SEO analysis — runs the 9-category technical audit (crawlability, indexability, security headers, URL structure, mobile, Core Web Vitals, structured data, JavaScript rendering, IndexNow/AI-crawler policy) on a URL or local HTML and returns structured per-dimension findings. Fanned out as an always-on technical specialist by the SEO audit orchestrator; wraps the seo-technical skill method with no forked logic.
+description: Dispatched leaf for technical-SEO analysis — runs the 10-dimension technical audit (crawlability incl. RFC 9309 AI-crawler policy, indexability incl. X-Robots-Tag and the 2 MB index limit, security, URL structure, mobile, Core Web Vitals lab risks, structured data, JavaScript rendering, SERP presentation, IndexNow guidance) on a URL or local HTML and returns structured per-dimension findings with fixes plus a deterministic lab score. Fanned out as an always-on technical specialist by the SEO audit orchestrator; wraps the seo-technical skill method with no forked logic.
 model: sonnet
 maxTurns: 12
 tools: Read, Glob, Grep, Bash
@@ -24,7 +24,7 @@ tools: Read, Glob, Grep, Bash
 ## Method
 
 The technical spine of SEO: run the bundled script on a URL (or local HTML), then
-interpret the result across 9 dimensions, deferring real field CWV to `seo-google`
+interpret the result across 10 dimensions (catalog: `references/seo-technical/check-catalog.md`), deferring real field CWV to `seo-google`
 and deep structured-data work to `seo-schema` (prose cross-references — not calls).
 
 ```
@@ -48,7 +48,7 @@ It never fails — the built-in Tier 2 is the product.
 1. **Tier 1 — Google field data.** If a Google PSI/CrUX key is set
    (`CRUX_API_KEY` / `GOOGLE_API_KEY`), hand the CWV dimension to `seo-google` for
    real field LCP/CLS/INP.
-2. **Tier 2 — built-in (the default).** Otherwise run `tech_audit.py` for all 9
+2. **Tier 2 — built-in (the default).** Otherwise run `tech_audit.py` for all 10
    dimensions with the lab CWV targets. A complete technical audit, zero spend.
 3. **Tier 3 — n/a.** No local CLI deepens this capability (`none`).
 4. **Tier 4 — guided.** Offline? Run `tech_audit.py --file page.html` and name
@@ -62,7 +62,7 @@ capability:   cwv-field
 tier1:        Google PSI / CrUX field data (via seo-google)
 tier1_signal: CRUX_API_KEY | GOOGLE_API_KEY
 tier2:        scripts/seo/tech_audit.py (lab heuristics + LCP<2.5 / CLS<0.1 / INP<200 targets)
-tier2_yields: 9-dimension technical findings + lab CWV risk flags + AI-crawler policy, zero spend
+tier2_yields: 10-dimension technical findings + fixes + lab score + lab CWV risk flags + AI-crawler policy, zero spend
 tier3:        none
 tier3_signal: none
 tier4:        run tech_audit.py --file offline; set CRUX_API_KEY/GOOGLE_API_KEY for field CWV
@@ -81,9 +81,9 @@ status:            ok | partial | error
 tier_ran:          1 | 2 | 4
 target:            <url or local file audited>
 findings:          <JSON array of {dimension, severity, finding, fix}; severity in critical|high|medium|info>
-dimensions:        crawlability, indexability, security, url-structure, mobile, cwv, structured-data, js-rendering, indexnow
+dimensions:        crawlability, indexability, security, url-structure, mobile, cwv, structured-data, js-rendering, serp-presentation, indexnow
 ai_crawler_policy: <recommended robots.txt stance — block AI training bots, allow AI retrieval bots>
-score:             null
+score:             <0-100 lab score from tech_audit.py `score` (observed findings only; never field CWV)>
 needs_tier1:       field CWV (LCP / CLS / INP field percentiles) | none
 handoffs:          seo-google (field CWV), seo-schema (structured data) | none
 tier_line:         <one sentence: which tier ran + what a higher tier would add>

@@ -84,26 +84,36 @@ those categories back.
 The verdict separates the two AI postures a robots.txt expresses and judges them
 against the GEO best practice — **stay retrievable even if you opt out of training**.
 
-- **Retrieval bots** (make you citable): `OAI-SearchBot`, `Claude-SearchBot`,
-  `PerplexityBot`.
-- **Training bots** (feed model training): `GPTBot`, `ClaudeBot`, `Google-Extended`,
-  `CCBot`.
+The crawler registry and evaluator live in `scripts/seo/ai_crawlers.py` (one source
+of truth shared with `tech_audit.py`). Four classes, each judged over its *core* tokens
+(non-core tokens are reported but never swing a stance):
 
-A bot's stance comes from real robots grouping: a specific `User-agent` group wins
-over the `*` group, and a root `Disallow: /` blocks unless a root `Allow: /` overrides
-it. A bot in no matching group is `unmentioned` (default-allow). Per group of bots the
-stance is `open` (none blocked), `blocked` (all blocked), or `partial`.
+- **Search engines** (the index AI Overviews / AI Mode / Copilot draw from):
+  `Googlebot`, `Bingbot`.
+- **Retrieval / AI-search bots** (make you citable): `OAI-SearchBot`,
+  `Claude-SearchBot`, `PerplexityBot`.
+- **User-triggered fetchers** (a person asked an assistant): `ChatGPT-User`,
+  `Claude-User`, `Perplexity-User`.
+- **Training bots / control tokens** (feed model training): `GPTBot`, `ClaudeBot`,
+  `Google-Extended`, `CCBot`.
+
+A bot's stance follows RFC 9309: every group naming the token merges, a specific group
+wins over `*`, the longest matching path rule decides (Allow wins a tie), and `*` / `$`
+wildcards apply — evaluated at `/`. A bot in no matching group is `unmentioned`
+(default-allow). Per class the stance is `open` (none blocked), `blocked` (all
+blocked), or `partial`.
 
 | Verdict | Condition | Read |
 |---|---|---|
-| `retrieval-blocked` | a retrieval bot is disallowed | **anti-pattern** — opting out of AI-answer citation |
+| `search-engine-blocked` | Googlebot or Bingbot is disallowed | **critical** — also removes AI Overviews / AI Mode / Copilot visibility |
+| `retrieval-blocked` | every retrieval bot is disallowed | **anti-pattern** — opting out of AI-answer citation |
 | `retrieval-partial` | some retrieval bots blocked | uneven citation coverage |
 | `citable-training-blocked` | retrieval open, training blocked | **best practice** — citable, opted out of training |
 | `citable-training-partial` | retrieval open, training partly blocked | citable; training mixed |
 | `fully-open` | all AI crawlers allowed | citable; no training opt-out |
 
 The verdict drives the `ai_crawler_access` category above: `retrieval_stance` open →
-100, partial → 40, blocked → 0. Training stance never lowers the access score — blocking
+100, partial → 40, blocked → 0 — and a blocked search engine forces 0 regardless. Training stance never lowers the access score — blocking
 training crawlers is a legitimate choice that does not hurt citability.
 
 ---
