@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Quickstart — install, first run, the no-paid-API path
+    url: https://github.com/ZachArticulateV/designer-pro-and-seo/blob/main/QUICKSTART.md
+    about: Most "a skill didn't fire" or "a script failed" questions are answered here.
+  - name: Support scope and what to include
+    url: https://github.com/ZachArticulateV/designer-pro-and-seo/blob/main/SUPPORT.md
+    about: What is covered, and what to include (and redact) before you open an issue.

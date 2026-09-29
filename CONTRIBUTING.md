@@ -21,6 +21,19 @@ Code plugin developed in the open. Issues and pull requests are welcome.
   offers a `--human` ASCII view. Invoke bundled scripts from skills via
   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/..."` so they resolve when installed.
 
+## Where things go
+
+Every top-level folder has a README that says what belongs in it. The short version:
+
+| You're adding… | Put it in | Also update |
+|---|---|---|
+| a skill | `skills/<name>/SKILL.md` | `SHIPPING.md`, `README.md`, `skills/README.md` |
+| a Python helper | `scripts/{seo,design,workflow}/` (check for an existing one first) | `references/PROVENANCE.md`, the README script count |
+| a dispatched agent | `agents/<name>.md` (from `_TEMPLATE.md`) | the orchestrator's dispatch block |
+| deep knowledge a skill loads | `references/<skill>/` or `references/shared/` | a PROVENANCE row |
+| a dated search fact | `references/shared/search-landscape-2026.md` only | its update log |
+| a worked example | `references/examples/<skill>/` | a test that pins its score |
+
 ## Submitting a change (fork → pull request)
 
 1. **Fork** this repo (the **Fork** button, top-right) — you get a copy under your account.

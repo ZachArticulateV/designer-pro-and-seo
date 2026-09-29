@@ -1,34 +1,43 @@
 # references/
 
-Deep documentation that skills load on-demand. Lives here (not inline in SKILL.md) to keep skill bodies short and discoverable.
+Deep knowledge that skills load **on demand**. Keeping it here keeps each `SKILL.md`
+short: a skill names a file by exact path, and the release gate checks that every cited
+path resolves. These files hold knowledge (rubrics, thresholds, code tables, worked
+examples), not procedure. Procedure lives in the skill's `## Steps`.
 
-## What goes here
+## Start here
 
-- Protocol-level docs that several skills share (e.g., `parallel-build-protocol.md`)
-- WCAG checklists, axe rule references, Schema.org type references
-- Industry-vertical guides (restaurant SEO checklist, healthcare LocalBusiness specifics)
-- Platform-specific quirks (WordPress block escaping, GoHighLevel embed limits, Webflow CMS bindings)
-- Source attribution notes (which external concepts informed which skill, link to the original where appropriate)
+| File | What it is |
+|---|---|
+| `shared/search-landscape-2026.md` | **Dated fact sheet** of what is true in search right now: AI Overviews / AI Mode, the 2 MB index limit, retired rich results, crawler classes. Reviewed quarterly. |
+| `ENGINE-CONTRACTS.md` | The interface spec every skill, script, agent and template follows |
+| `CAPABILITY-TIERS.md` | The Tier 1→4 tool cascade: use a connector when present, otherwise the free path |
+| `PROVENANCE.md` | The clean-room ledger: who authored every asset and from what public basis |
+| `skill-section-template.md` | Copy-ready `SKILL.md` skeleton in the canonical section order |
 
-## What doesn't go here
+## shared/: knowledge several skills cite
 
-- Per-skill operational docs — those belong in the skill's SKILL.md or in `templates/`
-- Generated reports — those belong in project workspaces, not the plugin
+`search-landscape-2026.md`, `cwv-thresholds.md`, `schema-catalog.md`,
+`eeat-criteria.md`, `wcag-contrast-rules.md`, `anti-slop-principles.md`
 
-## Status
+## Per-skill folders: the depth behind each Core skill
 
-In use. Present: `ENGINE-CONTRACTS.md` (interface spec), `CAPABILITY-TIERS.md`
-(tool-aware routing cascade, loaded on-demand by several skills), `PROVENANCE.md`
-(clean-room ledger), `DEEP-DIVE-ANALYSIS.md` (archived roadmap, kept for
-provenance), `README.md` (this file), and `examples/` (golden outputs for shipping
-skills). Grows as more skills ship.
+| Folder | Holds |
+|---|---|
+| `seo-technical/` | check catalog, severity ladder, lab-score formula |
+| `seo-schema/` | `@id` conventions, value rules, entity-graph scoring |
+| `seo-content/` | content rubric, page-type depth floors, YMYL bar |
+| `seo-sitemap/` | S/G/L codes: validation, quality gates, link architecture |
+| `seo-image-audit/` | image codes, byte/pixel budgets, format targets |
+| `seo-geo/` + `geo-scorecard.md` | AI-surfaces playbook, fan-out method, GEO scoring |
+| `seo-hreflang/`, `seo-ecommerce/` | cluster rules; merchant-listing and facet checks |
+| `seo-audit/` | dispatch matrix (who runs when) and health-score weights |
+| `seo-cluster/`, `seo-drift/`, `seo-local-unified/`, `seo-strategy/` | clustering method, drift rules D1–D15, SoLV + NAP, the evidence-led strategy prompts |
+| `design-*/` | design-system ranking, build anti-slop, accessibility checks, CRO heuristics, motion rubric, visual-QA rubric, research rubric |
 
-## Subfolder convention
+## examples/: golden outputs
 
-*Planned namespaces — created as skills need them; not all are present yet.*
+One folder per Core skill with real inputs, the exact command, and the expected
+result. Tests pin each one (see `examples/README.md`).
 
-- `references/wcag/` — WCAG 2.2 quick references, axe rule details
-- `references/schema/` — Schema.org type cheatsheets
-- `references/platforms/` — WP / GHL / Webflow / Wix / Framer / Squarespace specifics
-- `references/verticals/` — industry-specific SEO guides
-- `references/protocols/` — multi-skill workflows (parallel-build, qa-gate)
+`DEEP-DIVE-ANALYSIS.md` is the archived pre-v1 roadmap, kept for provenance only.

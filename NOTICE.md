@@ -25,6 +25,18 @@ against them; it does not redistribute their text.
 - **Core Web Vitals** (Google) — performance metric definitions.
 - **IndexNow**, **Open Graph**, **robots.txt / sitemaps.org** — open web
   protocols, referenced by the technical-SEO skills.
+- **RFC 9309** (Robots Exclusion Protocol, IETF) — the robots.txt matching rules
+  `scripts/seo/ai_crawlers.py` implements.
+- **ISO 639-1 / ISO 3166-1 / ISO 15924 / ISO 4217** — language, region, script and
+  currency codes checked by the hreflang and schema engines. Code lists are used as
+  data; no standard text is reproduced.
+- **Google image / video / news sitemap extensions** and **hreflang** annotations —
+  public element names validated by the sitemap and hreflang engines.
+- **llms.txt** — a public community proposal for a Markdown site summary; the format is
+  implemented from its published description (`scripts/seo/llms_txt.py`).
+- **AI crawler user-agent tokens** (GPTBot, OAI-SearchBot, ClaudeBot, Claude-SearchBot,
+  PerplexityBot, Google-Extended, …) — operators' publicly documented names, used only
+  to read and write robots.txt rules. Product names belong to their owners.
 
 ## Externally named methodologies
 

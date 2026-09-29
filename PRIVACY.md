@@ -22,6 +22,25 @@ Firecrawl, nanobanana image generation). When you use those:
 - Any credential the plugin reads stays in your local environment; it is sent
   only to the service you configured, by that service's own client.
 
+## Which scripts touch the network
+
+Almost everything runs fully offline on files you pass in. A script fetches only when
+you give it a URL, and every fetch goes through the one shared guard
+(`scripts/workflow/net_safety.py`). The guard refuses private, loopback and
+cloud-metadata addresses on every redirect hop.
+
+- **Fetch when given `--url`:** `tech_audit.py`, `content_audit.py`, `image_audit.py`,
+  `product_audit.py`, `geo_check.py` (also reads the site's `/robots.txt` and
+  `/llms.txt`), `page_fetch.py`, `site_map.py`, `drift_*`.
+- **Fetch a sample on request:** `sitemap_tools.py --check-live` fetches the first N
+  sitemap URLs and states how many.
+- **Never fetch:** `site_audit.py`, `qa_gate.py`, `schema_gen.py`, `link_graph.py`,
+  `hreflang_tools.py`, `llms_txt.py`, `ai_crawlers.py`, `cro_audit.py` (file mode),
+  `motion_audit.py`, and the design engine.
+
+`seo-drift` stores baselines in a local SQLite file (`.seo-drift/` in your working
+directory by default). Nothing leaves your machine.
+
 ## Data you process
 
 - **Scraped pages, crawl results, and reports** are written to your local

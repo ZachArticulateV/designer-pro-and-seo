@@ -21,14 +21,16 @@ these through a Python helper in `scripts/design/`.
   metadata with our own pairing rationale
 - `product-types.csv` — product/page types mapped to recommended
   pattern/style/color/typography defaults (authored)
-- `ux-rules.csv` — UX guidelines in our own words, tagged by priority/category/platform
+- `ux-rules.csv` — UX guidelines in our own words, tagged by priority/category/platform;
+  its `conversion` rows are the rule set `scripts/design/cro_audit.py` cites per finding
+- `chart-types.csv` — chart types matched to data shapes (read by `scripts/design/gen_charts.py`)
+- `competitor-rubric.csv` — the weighted scoring rubric behind `design-research`
 
 ## Roadmap (not yet shipped)
 
 Planned but not built; nothing references these yet:
 
 - `google-fonts-meta.csv` — Google Fonts metadata (weights, subsets, variable axes)
-- `chart-types.csv` — chart types matched to data shapes
 - `seo-business-types.csv` — business-profile signals → recommended SEO skill mix
 - `industry-templates.csv` — industry overlays for SEO strategy
 
@@ -49,6 +51,7 @@ which dimension fell back to heuristics when a library is absent.
 
 ## Status
 
-Five libraries shipping (clean-room): `ui-styles.csv`, `color-palettes.csv`
-(generated, reproducible), `font-pairings.csv`, `product-types.csv`, `ux-rules.csv`.
+Seven libraries shipping (clean-room): `ui-styles.csv`, `color-palettes.csv`
+(generated, reproducible), `font-pairings.csv`, `product-types.csv`, `ux-rules.csv`,
+`chart-types.csv`, `competitor-rubric.csv`.
 Per-file method, row counts, and licenses are recorded in `references/PROVENANCE.md`.
