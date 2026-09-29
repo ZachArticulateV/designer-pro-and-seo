@@ -6,7 +6,7 @@ Prompt templates and starter files referenced by skills. Skills load these on-de
 
 - `blast-template.md` — Blueprint / Link / Architect / Stylize / Trigger build-brief structure (used by `blast-prompt`)
 - `dimensions-template.md` — 5 Core Dimensions design brief (used by `design-dimensions`)
-- `qa-report-template.md` — 9-phase QA gate output structure (used by `qa-gate`)
+- `qa-report-template.md` — 9-phase QA gate output structure (used by `qa-gate`; `scripts/workflow/qa_gate.py --report` fills every `{{placeholder}}` automatically from the static gate run)
 - `design-system-starter.md` — empty design system MASTER.md ready to populate (used by `design-system-persist`)
 - `outreach-message-starter.md` — niche-anchored cold-email skeleton (used by `client-outreach`)
 - `outreach-followup-sequence.md` — 4–7 touchpoint cadence (used by `client-outreach`)
@@ -19,6 +19,13 @@ Planned but not built; nothing references these yet:
 - `competitive-report-template.md` — interactive HTML scoring report shell
 - `content-brief-template.md` — competitive content brief structure
 - `local-business-schema-template.json` — LocalBusiness JSON-LD starter
+
+## How templates are used
+
+Skills load a template by exact path and fill its `{{placeholders}}`. The front-matter
+block at the top (`template`, `used_by`, `purpose`) records which skill owns it. Keep
+wording original. Third-party attribution headers are forbidden here: attribution, if
+ever needed, lives only in `NOTICE.md` (see `references/ENGINE-CONTRACTS.md` §13).
 
 ## Status
 
