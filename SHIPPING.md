@@ -10,7 +10,7 @@ not released, excluded from functional claims & support).
 Total skills: 45 (**45 ✅ Stable**, 0 🟡 In development). Depth: **24 Core · 18 Lite ·
 3 routing** (see [Depth tiers](#depth-tiers-core--lite--routing--a-partition-of-the-45)).
 
-## ✅ Shipping (v1.10.0) — 45 skills
+## ✅ Shipping (v1.10.1) — 45 skills
 
 **Design (10):** `design-system-gen`, `design-dimensions`, `design-motion`,
 `design-system-persist`, `design-build`, `design-tokens-emit`, `design-cro`,
@@ -90,6 +90,9 @@ library (`design/match.py` is library-only, the ranker behind `design_system.py`
   `site_map`, `sitemap_tools`, `tech_audit`
 - **workflow/** — `audit_aggregate`, `capability_probe`, `cost_guard`, `csv_to_report`,
   `net_safety` (the one shared SSRF guard), `portable_html`, `qa_gate` (static 9-phase gate runner), `site_audit` (one-command SEO health score)
+
+Each folder under `scripts/` is mapped script-by-script in `scripts/README.md`, and
+every top-level folder has its own README (see README → "Repository map").
 
 Dated search facts every SEO skill relies on live in one file,
 `references/shared/search-landscape-2026.md` (reviewed quarterly).

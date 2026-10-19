@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.coverage
+htmlcov/
 .mypy_cache/
 *.egg-info/
 .venv/
@@ -21,6 +23,7 @@ desktop.ini
 
 # Claude Code worktrees / local agent state
 .claude/worktrees/
+.claude/settings.local.json
 
 # Secrets — never commit credentials (MCP servers read these from the environment)
 .env
@@ -30,6 +33,8 @@ desktop.ini
 # Generated/output artifacts (skills write into the user's workspace, not here)
 /tmp/
 *.log
+# seo-drift's default SQLite baseline store, created in the working directory
+.seo-drift/
 
 # Internal process docs — kept locally, not shipped in the public plugin
 docs/

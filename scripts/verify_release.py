@@ -959,9 +959,11 @@ ORCHESTRATORS = {
 
 def _agent_files(root):
     """Real dispatched-leaf agents: agents/*.md minus any '_'-prefixed scaffold
-    (e.g. _TEMPLATE.md, which holds angle-bracket placeholders, not a real leaf)."""
+    (e.g. _TEMPLATE.md, which holds angle-bracket placeholders, not a real leaf) and
+    the folder's README.md (documentation, not an agent)."""
     return sorted(p for p in glob.glob(os.path.join(root, "agents", "*.md"))
-                  if not os.path.basename(p).startswith("_"))
+                  if not os.path.basename(p).startswith("_")
+                  and os.path.basename(p).lower() != "readme.md")
 
 
 def _agent_frontmatter(text):

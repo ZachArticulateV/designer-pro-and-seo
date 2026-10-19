@@ -25,6 +25,15 @@ All are optional — the shipping skills work without them. Package versions in 
 `.mcp.json` are **pinned to a version verified on npm** (no floating `@latest`) for
 reproducible installs; bump them when you want a newer release.
 
+## What runs when an extension is missing
+
+| Extension | Adds | Free path that runs without it |
+|---|---|---|
+| `playwright/` | live axe scans, screenshots, real interaction | `a11y_static.py`, `motion_audit.py`, `cro_audit.py`, `qa_gate.py` (phases 2 and 8 marked N/A) |
+| `firecrawl/` | full-site crawl, JS rendering | `site_map.py` discovery, `link_graph.py` on a build, `sitemap_tools.py --check-live` sample |
+| `dataforseo/` | SERP, keyword, backlink, AI-visibility data | `serp_cluster.py` on supplied SERPs, `geo_check.py`, on-page engines; volumes listed as `needs_tier1` |
+| `nanobanana/` | image pixels | an exact image spec (dimensions, alt, OG meta, schema `image`) |
+
 ## Design intent
 
 Skills that depend on an extension must degrade gracefully via the plugin's
